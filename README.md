@@ -110,21 +110,21 @@ DATABASE_URL=postgresql://...
 
 ## Despliegue en Render
 
-Tambien puedes desplegar con Blueprint usando `render.yaml` incluido en la raiz del proyecto.
+Tambien puedes desplegar con Blueprint usando render.yaml incluido en la raiz del proyecto.
 
-1. Crear nuevo Web Service desde repositorio.
-2. Build Command:
-   npm install && npm run migrate && npm run seed
-3. Start Command:
-   npm run start
-4. Variables de entorno recomendadas:
-   - NODE_ENV=production
-   - PORT=10000
-   - JWT_SECRET=valor-seguro
-   - QR_SECRET=valor-seguro
-   - DB_CLIENT=pg
-   - DATABASE_URL=(de PostgreSQL de Render)
-   - LATE_AFTER=09:05
+1. En Render, entra a New + > Blueprint.
+2. Selecciona el repositorio y rama main.
+3. Render detectara render.yaml y creara automaticamente:
+   - Servicio web qr-assist-app.
+   - Base PostgreSQL qr-assist-db.
+4. Define solo secretos pendientes en el formulario de Render:
+   - JWT_SECRET
+   - QR_SECRET
+5. Aplica el Blueprint y espera el primer deploy.
+
+Notas:
+- DATABASE_URL se configura automaticamente desde la base creada por Blueprint.
+- Si el plan Free no esta disponible en tu cuenta, cambia plan: free por starter en render.yaml para web y database.
 
 ## Seguridad y notas
 

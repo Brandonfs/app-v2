@@ -14,7 +14,9 @@ services:
       - key: DB_CLIENT
         value: pg
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: qr-assist-db
+          property: connectionString
       - key: JWT_SECRET
         sync: false
       - key: QR_SECRET
@@ -23,3 +25,9 @@ services:
         value: 8h
       - key: LATE_AFTER
         value: 09:05
+
+databases:
+  - name: qr-assist-db
+    plan: free
+    databaseName: qr_assist
+    user: qr_assist_user
