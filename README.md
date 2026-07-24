@@ -117,13 +117,11 @@ Tambien puedes desplegar con Blueprint usando render.yaml incluido en la raiz de
 3. Render detectara render.yaml y creara automaticamente:
    - Servicio web qr-assist-app.
    - Base PostgreSQL qr-assist-db.
-4. Define solo secretos pendientes en el formulario de Render:
-   - JWT_SECRET
-   - QR_SECRET
-5. Aplica el Blueprint y espera el primer deploy.
+4. Aplica el Blueprint y espera el primer deploy.
 
 Notas:
 - DATABASE_URL se configura automaticamente desde la base creada por Blueprint.
+- JWT_SECRET y QR_SECRET se autogeneran con generateValue en el blueprint.
 - Si el plan Free no esta disponible en tu cuenta, cambia plan: free por starter en render.yaml para web y database.
 
 ## Seguridad y notas
