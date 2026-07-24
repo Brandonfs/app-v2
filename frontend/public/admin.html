@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Assist | Administracion</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="bg-grid">
+  <main class="shell">
+    <header id="topbar" class="topbar view-card"></header>
+
+    <section class="view-card">
+      <h2>Filtros de reporte</h2>
+      <div class="grid-2">
+        <label>Fecha inicio
+          <input type="date" id="start-date" />
+        </label>
+        <label>Fecha fin
+          <input type="date" id="end-date" />
+        </label>
+        <label>Estado
+          <select id="status-filter">
+            <option value="">Todos</option>
+            <option value="on_time">A tiempo</option>
+            <option value="late">Tardia</option>
+          </select>
+        </label>
+      </div>
+      <div class="nav-links">
+        <button id="filter-btn">Filtrar</button>
+        <button id="export-excel">Exportar Excel</button>
+        <button id="export-pdf">Exportar PDF</button>
+      </div>
+    </section>
+
+    <section class="view-card">
+      <h2>Registros de asistencia</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Usuario</th>
+            <th>Sucursal</th>
+            <th>Fecha/Hora</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="attendance-rows"></tbody>
+      </table>
+    </section>
+
+    <section class="view-card">
+      <h2>Usuarios y roles</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Sucursal</th>
+            <th>Accion</th>
+          </tr>
+        </thead>
+        <tbody id="users-rows"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

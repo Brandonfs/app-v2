@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Assist | Bienvenida</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="bg-grid">
+  <main class="shell shell-auth">
+    <section class="hero-card">
+      <h1>QR Assist</h1>
+      <p>Sistema profesional de asistencia por QR con control por roles.</p>
+      <ul>
+        <li>Autenticacion JWT</li>
+        <li>Registro y asistencia con camara</li>
+        <li>Reportes exportables PDF/Excel</li>
+      </ul>
+    </section>
+
+    <section class="panel-card">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="login">Iniciar sesion</button>
+        <button class="tab-btn" data-tab="register">Registrarse</button>
+      </div>
+
+      <form id="login-form" class="tab-pane active">
+        <label>Usuario
+          <input type="text" name="username" required />
+        </label>
+        <label>Contraseña
+          <input type="password" name="password" required />
+        </label>
+        <button type="submit">Entrar</button>
+      </form>
+
+      <form id="register-form" class="tab-pane">
+        <label>Nombre completo
+          <input type="text" name="fullName" required />
+        </label>
+        <label>Usuario
+          <input type="text" name="username" required />
+        </label>
+        <label>Contraseña
+          <input type="password" name="password" minlength="6" required />
+        </label>
+        <label>Rol
+          <select name="role">
+            <option value="empleado">Empleado</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+        <button type="submit">Crear cuenta</button>
+      </form>
+
+      <p id="auth-message" class="message"></p>
+    </section>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/index.js"></script>
+</body>
+</html>

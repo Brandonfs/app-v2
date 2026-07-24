@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Assist | Escaneo QR</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="bg-grid">
+  <main class="shell">
+    <header id="topbar" class="topbar view-card"></header>
+
+    <section class="grid-2">
+      <article class="view-card">
+        <h2>Generar QR de asistencia</h2>
+        <p>Disponible para admin y supervisor.</p>
+        <button id="generate-qr">Generar QR</button>
+        <div id="qr-container" class="qr-box">Sin QR generado</div>
+      </article>
+
+      <article class="view-card">
+        <h2>Escanear QR</h2>
+        <p>Apunta la camara al codigo para registrar asistencia.</p>
+        <div id="reader" class="qr-box"></div>
+        <button id="start-scan">Iniciar escaneo</button>
+        <button id="stop-scan">Detener</button>
+      </article>
+    </section>
+
+    <section class="view-card">
+      <h2>Resultado</h2>
+      <p id="scan-message" class="message"></p>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/html5-qrcode" defer></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/scan.js"></script>
+</body>
+</html>

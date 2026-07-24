@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: qr-assist-app
+    env: node
+    plan: free
+    autoDeploy: true
+    buildCommand: npm install && npm run migrate && npm run seed
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_CLIENT
+        value: pg
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: QR_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: LATE_AFTER
+        value: 09:05
