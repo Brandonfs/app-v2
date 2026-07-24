@@ -119,6 +119,9 @@ Tambien puedes desplegar con Blueprint usando render.yaml incluido en la raiz de
 5. Aplica el Blueprint y espera el primer deploy.
 
 Notas:
+- El build en Render solo instala dependencias; las migraciones se ejecutan al iniciar el servicio.
+- El seed no se ejecuta automaticamente en produccion.
+- Si quieres cargar usuarios demo, ejecuta npm run seed una sola vez desde Shell del servicio.
 - Si usas plan Free, Render solo permite una base Free activa por workspace/cuenta.
 - En ese caso, reutiliza tu base existente y pega su Internal Database URL en DATABASE_URL.
 - JWT_SECRET y QR_SECRET se autogeneran con generateValue en el blueprint.

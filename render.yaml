@@ -4,8 +4,8 @@ services:
     env: node
     plan: free
     autoDeploy: true
-    buildCommand: npm install && npm run migrate && npm run seed
-    startCommand: npm run start
+    buildCommand: npm install
+    startCommand: npm run migrate && npm run start
     envVars:
       - key: NODE_ENV
         value: production
