@@ -2,9 +2,8 @@ const path = require('path');
 const dotenv = require('dotenv');
 
 dotenv.config({
-  path: process.env.NODE_ENV === 'production'
-    ? path.join(process.cwd(), '.env')
-    : path.join(process.cwd(), '.env')
+  path: path.join(process.cwd(), '.env'),
+  quiet: true
 });
 
 const env = {
