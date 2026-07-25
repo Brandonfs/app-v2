@@ -114,16 +114,16 @@ Tambien puedes desplegar con Blueprint usando render.yaml incluido en la raiz de
 
 1. En Render, entra a New + > Blueprint.
 2. Selecciona el repositorio y rama main.
-3. Render detectara render.yaml y creara automaticamente el servicio web qr-assist-app.
-4. En el servicio web, configura DATABASE_URL apuntando a tu PostgreSQL existente en Render.
-5. Aplica el Blueprint y espera el primer deploy.
+3. Render detectara render.yaml y creara automaticamente:
+  - Servicio web qr-assist-app
+  - Base PostgreSQL qr-assist-db
+4. Aplica el Blueprint y espera el primer deploy.
 
 Notas:
 - El build en Render solo instala dependencias; las migraciones se ejecutan al iniciar el servicio.
 - El seed no se ejecuta automaticamente en produccion.
 - Si quieres cargar usuarios demo, ejecuta npm run seed una sola vez desde Shell del servicio.
-- Si usas plan Free, Render solo permite una base Free activa por workspace/cuenta.
-- En ese caso, reutiliza tu base existente y pega su Internal Database URL en DATABASE_URL.
+- Si aparece error por limite Free (cannot have more than one active free tier database), elimina la DB Free previa o cambia plan: free por starter en render.yaml.
 - JWT_SECRET y QR_SECRET se autogeneran con generateValue en el blueprint.
 - Si el plan Free no esta disponible en tu cuenta, cambia plan: free por starter en render.yaml para web y database.
 
