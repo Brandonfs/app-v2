@@ -102,6 +102,66 @@ const bootstrapAdmin = async (req, res, next) => {
   }
 };
 
+const recoverAdmin = async (req, res, next) => {
+  try {
+    if (!env.bootstrapAdminToken) {
+      return res.status(403).json({ message: 'Bootstrap admin deshabilitado.' });
+    }
+
+    const providedToken = req.headers['x-bootstrap-token'] || req.body.bootstrapToken;
+    if (!providedToken || providedToken !== env.bootstrapAdminToken) {
+      return res.status(401).json({ message: 'Token de bootstrap invalido.' });
+    }
+
+    const { fullName, username, password, branchId } = req.body;
+
+    if (!fullName || !username || !password) {
+      return res.status(400).json({ message: 'Nombre, usuario y password son obligatorios.' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres.' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const existingUser = await db('users').where({ username }).first();
+
+    if (existingUser) {
+      await db('users')
+        .where({ id: existingUser.id })
+        .update({
+          full_name: fullName,
+          password_hash: passwordHash,
+          role: 'admin',
+          branch_id: branchId || null,
+          is_active: true
+        });
+
+      return res.json({
+        message: 'Admin recuperado correctamente.',
+        userId: existingUser.id
+      });
+    }
+
+    const insertResult = await db('users').insert({
+      full_name: fullName,
+      username,
+      password_hash: passwordHash,
+      role: 'admin',
+      branch_id: branchId || null,
+      is_active: true
+    });
+    const id = extractInsertId(insertResult);
+
+    return res.status(201).json({
+      message: 'Admin creado por recuperacion.',
+      userId: id
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -157,4 +217,4 @@ const me = async (req, res, next) => {
   }
 };
 
-module.exports = { register, bootstrapAdmin, login, me };
+module.exports = { register, bootstrapAdmin, recoverAdmin, login, me };

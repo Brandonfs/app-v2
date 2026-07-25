@@ -154,3 +154,16 @@ Reglas:
 
 - Solo funciona si no existe ningun admin activo.
 - Requiere token correcto.
+
+Si recibes 409 porque ya existe un admin y no tienes acceso, usa recuperacion:
+
+1. Ejecuta POST a /api/auth/recover-admin con el mismo header x-bootstrap-token.
+2. Ese endpoint crea o actualiza el usuario indicado como admin y resetea contraseña.
+
+Ejemplo de body JSON para recuperacion:
+
+{
+  "fullName": "Admin Recuperado",
+  "username": "admin",
+  "password": "Admin123*"
+}
