@@ -5,7 +5,7 @@ Aplicacion web completa de asistencia con Node.js + Express + frontend HTML/CSS/
 ## Caracteristicas
 
 - Registro de usuarios.
-- Inicio de sesion con usuario y contraseña.
+- Inicio de sesion con cedula y contraseña.
 - Autenticacion JWT.
 - Roles: admin, supervisor, empleado.
 - Modulos separados:
@@ -13,12 +13,13 @@ Aplicacion web completa de asistencia con Node.js + Express + frontend HTML/CSS/
   - Modulo Usuario
   - Modulo Escaneo QR
   - Modulo Administracion
-- Generacion de codigo QR para asistencia.
+- QR rotativo por sede (actualizacion cada 3 segundos en pagina principal).
 - Escaneo por camara desde navegador.
 - Registro de asistencia con fecha/hora/usuario.
 - Visualizacion y filtrado de registros por fecha y estado.
 - Tardanzas destacadas en rojo.
 - Exportacion de reportes a PDF y Excel.
+- Administracion de credenciales por cedula (busqueda y reseteo de contraseña).
 - Interfaz responsive y mobile-friendly.
 - Manejo de errores con mensajes claros.
 - Preparada para despliegue en Render.

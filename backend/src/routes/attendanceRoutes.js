@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   generateQr,
+  getPublicBranchQrs,
   checkin,
   getMyAttendance,
   getAttendanceReport
@@ -9,10 +10,10 @@ const { authenticate, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.use(authenticate);
-router.post('/qr', authorize('admin', 'supervisor'), generateQr);
-router.post('/checkin', authorize('admin', 'supervisor', 'empleado'), checkin);
-router.get('/my', authorize('admin', 'supervisor', 'empleado'), getMyAttendance);
-router.get('/', authorize('admin', 'supervisor'), getAttendanceReport);
+router.get('/public/branches-qr', getPublicBranchQrs);
+router.post('/qr', authenticate, authorize('admin', 'supervisor'), generateQr);
+router.post('/checkin', authenticate, authorize('admin', 'supervisor', 'empleado'), checkin);
+router.get('/my', authenticate, authorize('admin', 'supervisor', 'empleado'), getMyAttendance);
+router.get('/', authenticate, authorize('admin', 'supervisor'), getAttendanceReport);
 
 module.exports = router;

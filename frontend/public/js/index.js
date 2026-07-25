@@ -1,6 +1,7 @@
 const tabs = document.querySelectorAll('.tab-btn');
 const panes = document.querySelectorAll('.tab-pane');
 const authMessage = document.getElementById('auth-message');
+const publicQrList = document.getElementById('public-qr-list');
 
 const setMessage = (msg, kind = 'error') => {
   authMessage.textContent = msg;
@@ -51,3 +52,30 @@ document.getElementById('register-form').addEventListener('submit', async (event
     setMessage(error.message, 'error');
   }
 });
+
+const renderPublicQrs = (items) => {
+  if (!items.length) {
+    publicQrList.innerHTML = '<p>No hay sedes registradas aun.</p>';
+    return;
+  }
+
+  publicQrList.innerHTML = items.map((item) => `
+    <article class="qr-wall-item">
+      <h3>${item.branchName}</h3>
+      <img src="${item.qrDataUrl}" alt="QR ${item.branchName}" />
+      <small>Actualizado: ${formatDateTime(item.generatedAt)}</small>
+    </article>
+  `).join('');
+};
+
+const loadPublicQrs = async () => {
+  try {
+    const items = await request('/attendance/public/branches-qr');
+    renderPublicQrs(items);
+  } catch (error) {
+    publicQrList.innerHTML = `<p>${error.message}</p>`;
+  }
+};
+
+loadPublicQrs();
+setInterval(loadPublicQrs, 3000);

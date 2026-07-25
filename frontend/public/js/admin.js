@@ -9,6 +9,17 @@ const usersRows = document.getElementById('users-rows');
 const startDate = document.getElementById('start-date');
 const endDate = document.getElementById('end-date');
 const statusFilter = document.getElementById('status-filter');
+const branchesList = document.getElementById('branches-list');
+const branchNameInput = document.getElementById('branch-name');
+const branchLocationInput = document.getElementById('branch-location');
+const branchMessage = document.getElementById('branch-message');
+const searchCedulaInput = document.getElementById('search-cedula');
+const searchUserButton = document.getElementById('search-user-btn');
+const foundUserInfo = document.getElementById('found-user-info');
+const newPasswordInput = document.getElementById('new-password');
+const resetPasswordButton = document.getElementById('reset-password-btn');
+
+let foundCedula = null;
 
 const buildQuery = () => {
   const params = new URLSearchParams();
@@ -26,7 +37,7 @@ const loadAttendance = async () => {
       <tr class="${row.status === 'late' ? 'late-row' : ''}">
         <td>${row.id}</td>
         <td>${row.fullName}</td>
-        <td>${row.username}</td>
+        <td>${row.cedula || row.username}</td>
         <td>${row.branchName || '-'}</td>
         <td>${formatDateTime(row.checkedInAt)}</td>
         <td><span class="badge ${row.status}">${row.status}</span></td>
@@ -48,7 +59,7 @@ const loadUsers = async () => {
       <tr>
         <td>${user.id}</td>
         <td>${user.fullName}</td>
-        <td>${user.username}</td>
+        <td>${user.cedula || user.username}</td>
         <td>
           ${currentUser.role === 'admin'
             ? `<select data-user-id="${user.id}" class="role-select">
@@ -64,6 +75,17 @@ const loadUsers = async () => {
     `).join('');
   } catch (error) {
     usersRows.innerHTML = `<tr><td colspan="6">${error.message}</td></tr>`;
+  }
+};
+
+const loadBranches = async () => {
+  try {
+    const branches = await request('/admin/branches');
+    branchesList.innerHTML = branches.map((branch) =>
+      `<li>${branch.name} ${branch.location ? `(${branch.location})` : ''}</li>`
+    ).join('');
+  } catch (error) {
+    branchesList.innerHTML = `<li>${error.message}</li>`;
   }
 };
 
@@ -101,6 +123,88 @@ const downloadReport = async (format) => {
 document.getElementById('export-excel').addEventListener('click', () => downloadReport('excel'));
 document.getElementById('export-pdf').addEventListener('click', () => downloadReport('pdf'));
 
+if (currentUser.role === 'admin') {
+  searchUserButton.addEventListener('click', async () => {
+    const cedula = searchCedulaInput.value.trim();
+    foundCedula = null;
+    resetPasswordButton.disabled = true;
+
+    if (!cedula) {
+      foundUserInfo.textContent = 'Ingresa una cedula para buscar.';
+      foundUserInfo.className = 'message error';
+      return;
+    }
+
+    try {
+      const user = await request(`/admin/users/by-cedula/${encodeURIComponent(cedula)}`);
+      foundCedula = user.cedula;
+      foundUserInfo.textContent = `Encontrado: ${user.fullName} (${user.role})`;
+      foundUserInfo.className = 'message success';
+      resetPasswordButton.disabled = false;
+    } catch (error) {
+      foundUserInfo.textContent = error.message;
+      foundUserInfo.className = 'message error';
+    }
+  });
+
+  resetPasswordButton.addEventListener('click', async () => {
+    const newPassword = newPasswordInput.value;
+    if (!foundCedula) {
+      foundUserInfo.textContent = 'Primero busca un usuario por cedula.';
+      foundUserInfo.className = 'message error';
+      return;
+    }
+    if (newPassword.length < 6) {
+      foundUserInfo.textContent = 'La nueva contraseña debe tener al menos 6 caracteres.';
+      foundUserInfo.className = 'message error';
+      return;
+    }
+
+    try {
+      await request('/admin/users/reset-password', {
+        method: 'PATCH',
+        body: JSON.stringify({ cedula: foundCedula, newPassword })
+      });
+      foundUserInfo.textContent = 'Contraseña reseteada correctamente.';
+      foundUserInfo.className = 'message success';
+      newPasswordInput.value = '';
+    } catch (error) {
+      foundUserInfo.textContent = error.message;
+      foundUserInfo.className = 'message error';
+    }
+  });
+
+  document.getElementById('create-branch-btn').addEventListener('click', async () => {
+    const name = branchNameInput.value.trim();
+    const location = branchLocationInput.value.trim();
+
+    if (!name) {
+      branchMessage.textContent = 'El nombre de sede es obligatorio.';
+      branchMessage.className = 'message error';
+      return;
+    }
+
+    try {
+      await request('/admin/branches', {
+        method: 'POST',
+        body: JSON.stringify({ name, location })
+      });
+      branchMessage.textContent = 'Sede creada correctamente.';
+      branchMessage.className = 'message success';
+      branchNameInput.value = '';
+      branchLocationInput.value = '';
+      await loadBranches();
+    } catch (error) {
+      branchMessage.textContent = error.message;
+      branchMessage.className = 'message error';
+    }
+  });
+} else {
+  searchUserButton.disabled = true;
+  resetPasswordButton.disabled = true;
+  document.getElementById('create-branch-btn').disabled = true;
+}
+
 usersRows.addEventListener('click', async (event) => {
   const button = event.target.closest('button[data-update-id]');
   if (!button) return;
@@ -122,4 +226,5 @@ usersRows.addEventListener('click', async (event) => {
 
 loadAttendance();
 loadUsers();
+loadBranches();
 }

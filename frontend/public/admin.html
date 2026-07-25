@@ -41,7 +41,7 @@
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Usuario</th>
+            <th>Cedula</th>
             <th>Sucursal</th>
             <th>Fecha/Hora</th>
             <th>Estado</th>
@@ -58,7 +58,7 @@
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Usuario</th>
+            <th>Cedula</th>
             <th>Rol</th>
             <th>Sucursal</th>
             <th>Accion</th>
@@ -66,6 +66,34 @@
         </thead>
         <tbody id="users-rows"></tbody>
       </table>
+    </section>
+
+    <section class="grid-2">
+      <article class="view-card">
+        <h2>Recuperar credenciales por cedula</h2>
+        <label>Cedula
+          <input type="text" id="search-cedula" placeholder="Ej: 10203040" />
+        </label>
+        <button id="search-user-btn">Buscar usuario</button>
+        <p id="found-user-info" class="message"></p>
+        <label>Nueva contraseña
+          <input type="password" id="new-password" minlength="6" placeholder="Nueva contraseña" />
+        </label>
+        <button id="reset-password-btn" disabled>Resetear contraseña</button>
+      </article>
+
+      <article class="view-card">
+        <h2>Crear sede</h2>
+        <label>Nombre de sede
+          <input type="text" id="branch-name" placeholder="Sucursal Centro" />
+        </label>
+        <label>Ubicacion
+          <input type="text" id="branch-location" placeholder="Direccion o zona" />
+        </label>
+        <button id="create-branch-btn">Crear sede</button>
+        <p id="branch-message" class="message"></p>
+        <ul id="branches-list" class="list-clean"></ul>
+      </article>
     </section>
   </main>
 

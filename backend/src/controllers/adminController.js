@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const bcrypt = require('bcryptjs');
 const { extractInsertId } = require('../utils/dbHelpers');
 
 const listUsers = async (req, res, next) => {
@@ -8,6 +9,7 @@ const listUsers = async (req, res, next) => {
       .select(
         'u.id',
         'u.full_name as fullName',
+        'u.username as cedula',
         'u.username',
         'u.role',
         'u.is_active as isActive',
@@ -17,6 +19,65 @@ const listUsers = async (req, res, next) => {
       .orderBy('u.id', 'asc');
 
     return res.json(users);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const findUserByCedula = async (req, res, next) => {
+  try {
+    const cedula = String(req.params.cedula || '').trim();
+    if (!cedula) {
+      return res.status(400).json({ message: 'Debes indicar una cedula valida.' });
+    }
+
+    const user = await db('users as u')
+      .leftJoin('branches as b', 'b.id', 'u.branch_id')
+      .where('u.username', cedula)
+      .first(
+        'u.id',
+        'u.full_name as fullName',
+        'u.username as cedula',
+        'u.role',
+        'u.is_active as isActive',
+        'b.name as branchName'
+      );
+
+    if (!user) {
+      return res.status(404).json({ message: 'No existe un usuario con esa cedula.' });
+    }
+
+    return res.json(user);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const resetUserPasswordByCedula = async (req, res, next) => {
+  try {
+    const cedula = String(req.body.cedula || '').trim();
+    const newPassword = String(req.body.newPassword || '');
+
+    if (!cedula || !newPassword) {
+      return res.status(400).json({ message: 'Cedula y nueva contraseña son obligatorias.' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres.' });
+    }
+
+    const user = await db('users').where({ username: cedula }).first('id', 'role');
+    if (!user) {
+      return res.status(404).json({ message: 'No existe un usuario con esa cedula.' });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await db('users').where({ id: user.id }).update({
+      password_hash: passwordHash,
+      is_active: true
+    });
+
+    return res.json({ message: 'Contraseña reseteada correctamente.' });
   } catch (error) {
     return next(error);
   }
@@ -69,4 +130,11 @@ const createBranch = async (req, res, next) => {
   }
 };
 
-module.exports = { listUsers, updateUserRole, listBranches, createBranch };
+module.exports = {
+  listUsers,
+  findUserByCedula,
+  resetUserPasswordByCedula,
+  updateUserRole,
+  listBranches,
+  createBranch
+};

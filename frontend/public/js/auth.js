@@ -30,7 +30,7 @@ const attachTopbar = (activePath) => {
   topbar.innerHTML = `
     <div>
       <strong>${user.fullName}</strong>
-      <p>${user.role} | ${user.username}</p>
+      <p>${user.role} | Cedula: ${user.cedula || user.username}</p>
     </div>
     <div class="nav-links">
       <a href="/user">Usuario</a>

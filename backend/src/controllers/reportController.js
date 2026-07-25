@@ -23,7 +23,7 @@ const exportExcel = async (req, res, next) => {
     sheet.columns = [
       { header: 'ID', key: 'id', width: 8 },
       { header: 'Nombre', key: 'fullName', width: 24 },
-      { header: 'Usuario', key: 'username', width: 20 },
+      { header: 'Cedula', key: 'cedula', width: 20 },
       { header: 'Rol', key: 'role', width: 14 },
       { header: 'Sucursal', key: 'branchName', width: 20 },
       { header: 'Fecha/Hora', key: 'checkedInAt', width: 26 },
@@ -65,7 +65,7 @@ const exportPdf = async (req, res, next) => {
     doc.moveDown();
 
     records.forEach((record) => {
-      const line = `${record.id} | ${record.fullName} | ${record.username} | ${record.branchName || '-'} | ${new Date(record.checkedInAt).toLocaleString('es-ES')} | ${record.status}`;
+      const line = `${record.id} | ${record.fullName} | ${record.cedula} | ${record.branchName || '-'} | ${new Date(record.checkedInAt).toLocaleString('es-ES')} | ${record.status}`;
       doc.fillColor(record.status === 'late' ? 'red' : 'black').fontSize(9).text(line);
     });
 
@@ -86,7 +86,7 @@ const getReportsLog = async (req, res, next) => {
         'r.status_filter as statusFilter',
         'r.file_type as fileType',
         'r.created_at as createdAt',
-        'u.username as generatedBy'
+        'u.username as generatedByCedula'
       )
       .orderBy('r.created_at', 'desc');
 

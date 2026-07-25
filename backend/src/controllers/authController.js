@@ -4,27 +4,30 @@ const db = require('../config/database');
 const env = require('../config/env');
 const { extractInsertId } = require('../utils/dbHelpers');
 
+const getCedula = (payload) => (payload.cedula || payload.username || '').trim();
+
 const signToken = (user) => jwt.sign(
-  { role: user.role, username: user.username },
+  { role: user.role, cedula: user.username },
   env.jwtSecret,
   { subject: String(user.id), expiresIn: env.jwtExpiresIn }
 );
 
 const register = async (req, res, next) => {
   try {
-    const { fullName, username, password, role, branchId } = req.body;
+    const { fullName, password, role, branchId } = req.body;
+    const cedula = getCedula(req.body);
 
-    if (!fullName || !username || !password) {
-      return res.status(400).json({ message: 'Nombre, usuario y password son obligatorios.' });
+    if (!fullName || !cedula || !password) {
+      return res.status(400).json({ message: 'Nombre, cedula y password son obligatorios.' });
     }
 
     if (password.length < 6) {
       return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres.' });
     }
 
-    const exists = await db('users').where({ username }).first();
+    const exists = await db('users').where({ username: cedula }).first();
     if (exists) {
-      return res.status(409).json({ message: 'El usuario ya existe.' });
+      return res.status(409).json({ message: 'Ya existe un usuario con esa cedula.' });
     }
 
     const safeRole = 'empleado';
@@ -32,7 +35,7 @@ const register = async (req, res, next) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const insertResult = await db('users').insert({
       full_name: fullName,
-      username,
+      username: cedula,
       password_hash: passwordHash,
       role: safeRole,
       branch_id: branchId || null,
@@ -57,10 +60,11 @@ const bootstrapAdmin = async (req, res, next) => {
       return res.status(401).json({ message: 'Token de bootstrap invalido.' });
     }
 
-    const { fullName, username, password, branchId } = req.body;
+    const { fullName, password, branchId } = req.body;
+    const cedula = getCedula(req.body);
 
-    if (!fullName || !username || !password) {
-      return res.status(400).json({ message: 'Nombre, usuario y password son obligatorios.' });
+    if (!fullName || !cedula || !password) {
+      return res.status(400).json({ message: 'Nombre, cedula y password son obligatorios.' });
     }
 
     if (password.length < 6) {
@@ -77,15 +81,15 @@ const bootstrapAdmin = async (req, res, next) => {
       return res.status(409).json({ message: 'Ya existe al menos un usuario admin activo.' });
     }
 
-    const exists = await db('users').where({ username }).first();
+    const exists = await db('users').where({ username: cedula }).first();
     if (exists) {
-      return res.status(409).json({ message: 'El usuario ya existe.' });
+      return res.status(409).json({ message: 'Ya existe un usuario con esa cedula.' });
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
     const insertResult = await db('users').insert({
       full_name: fullName,
-      username,
+      username: cedula,
       password_hash: passwordHash,
       role: 'admin',
       branch_id: branchId || null,
@@ -113,10 +117,11 @@ const recoverAdmin = async (req, res, next) => {
       return res.status(401).json({ message: 'Token de bootstrap invalido.' });
     }
 
-    const { fullName, username, password, branchId } = req.body;
+    const { fullName, password, branchId } = req.body;
+    const cedula = getCedula(req.body);
 
-    if (!fullName || !username || !password) {
-      return res.status(400).json({ message: 'Nombre, usuario y password son obligatorios.' });
+    if (!fullName || !cedula || !password) {
+      return res.status(400).json({ message: 'Nombre, cedula y password son obligatorios.' });
     }
 
     if (password.length < 6) {
@@ -124,7 +129,7 @@ const recoverAdmin = async (req, res, next) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const existingUser = await db('users').where({ username }).first();
+    const existingUser = await db('users').where({ username: cedula }).first();
 
     if (existingUser) {
       await db('users')
@@ -145,7 +150,7 @@ const recoverAdmin = async (req, res, next) => {
 
     const insertResult = await db('users').insert({
       full_name: fullName,
-      username,
+      username: cedula,
       password_hash: passwordHash,
       role: 'admin',
       branch_id: branchId || null,
@@ -164,12 +169,13 @@ const recoverAdmin = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ message: 'Usuario y contraseña son obligatorios.' });
+    const { password } = req.body;
+    const cedula = getCedula(req.body);
+    if (!cedula || !password) {
+      return res.status(400).json({ message: 'Cedula y contraseña son obligatorios.' });
     }
 
-    const user = await db('users').where({ username, is_active: 1 }).first();
+    const user = await db('users').where({ username: cedula, is_active: 1 }).first();
     if (!user) {
       return res.status(401).json({ message: 'Credenciales invalidas.' });
     }
@@ -187,6 +193,7 @@ const login = async (req, res, next) => {
       user: {
         id: user.id,
         fullName: user.full_name,
+        cedula: user.username,
         username: user.username,
         role: user.role,
         branchId: user.branch_id
@@ -205,6 +212,7 @@ const me = async (req, res, next) => {
       .first(
         'u.id',
         'u.full_name as fullName',
+        'u.username as cedula',
         'u.username',
         'u.role',
         'u.branch_id as branchId',

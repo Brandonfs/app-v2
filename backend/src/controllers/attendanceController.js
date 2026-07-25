@@ -3,6 +3,27 @@ const QRCode = require('qrcode');
 const db = require('../config/database');
 const env = require('../config/env');
 
+const createQrForBranch = async ({ branchId, generatedBy }) => {
+  const nonce = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+  const generatedAt = new Date().toISOString();
+  const payload = {
+    branchId,
+    generatedAt,
+    nonce,
+    generatedBy: generatedBy || null
+  };
+
+  const qrToken = jwt.sign(payload, env.qrSecret, { expiresIn: '30s' });
+  const qrDataUrl = await QRCode.toDataURL(qrToken);
+
+  return {
+    qrToken,
+    qrDataUrl,
+    generatedAt,
+    expiresInSeconds: 30
+  };
+};
+
 const calculateStatus = (date) => {
   const [hours, minutes] = env.lateAfter.split(':').map(Number);
   const threshold = new Date(date);
@@ -12,19 +33,31 @@ const calculateStatus = (date) => {
 
 const generateQr = async (req, res, next) => {
   try {
-    const nonce = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const generatedAt = new Date().toISOString();
-    const payload = {
-      branchId: req.user.branch_id || null,
-      generatedAt,
-      nonce,
+    const branchId = req.body.branchId || req.user.branch_id || null;
+    const qr = await createQrForBranch({
+      branchId,
       generatedBy: req.user.id
-    };
+    });
 
-    const qrToken = jwt.sign(payload, env.qrSecret, { expiresIn: '10m' });
-    const qrDataUrl = await QRCode.toDataURL(qrToken);
+    return res.json(qr);
+  } catch (error) {
+    return next(error);
+  }
+};
 
-    return res.json({ qrToken, qrDataUrl, expiresIn: '10m' });
+const getPublicBranchQrs = async (req, res, next) => {
+  try {
+    const branches = await db('branches').select('id', 'name').orderBy('name', 'asc');
+    const items = await Promise.all(branches.map(async (branch) => {
+      const qr = await createQrForBranch({ branchId: branch.id, generatedBy: null });
+      return {
+        branchId: branch.id,
+        branchName: branch.name,
+        ...qr
+      };
+    }));
+
+    return res.json(items);
   } catch (error) {
     return next(error);
   }
@@ -41,9 +74,14 @@ const checkin = async (req, res, next) => {
     const now = new Date();
     const status = calculateStatus(now);
 
+    const branchId = decoded.branchId || req.user.branch_id || null;
+    const branch = branchId
+      ? await db('branches').where({ id: branchId }).first('name')
+      : null;
+
     await db('attendance').insert({
       user_id: req.user.id,
-      branch_id: decoded.branchId || req.user.branch_id || null,
+      branch_id: branchId,
       checked_in_at: now,
       status,
       qr_nonce: decoded.nonce,
@@ -53,7 +91,8 @@ const checkin = async (req, res, next) => {
     return res.status(201).json({
       message: status === 'late' ? 'Asistencia registrada como tardia.' : 'Asistencia registrada a tiempo.',
       status,
-      checkedInAt: now.toISOString()
+      checkedInAt: now.toISOString(),
+      branchName: branch?.name || 'Sin sede'
     });
   } catch (error) {
     if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
@@ -89,6 +128,7 @@ const buildReportQuery = (filters) => {
     .select(
       'a.id',
       'u.full_name as fullName',
+      'u.username as cedula',
       'u.username',
       'u.role',
       'b.name as branchName',
@@ -121,6 +161,7 @@ const getAttendanceReport = async (req, res, next) => {
 
 module.exports = {
   generateQr,
+  getPublicBranchQrs,
   checkin,
   getMyAttendance,
   getAttendanceReport,

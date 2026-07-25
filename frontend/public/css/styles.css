@@ -176,6 +176,45 @@ select {
   margin-bottom: 16px;
 }
 
+.qr-wall-card {
+  grid-column: 1 / -1;
+}
+
+.qr-wall-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.qr-wall-item {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  background: #fbfdff;
+}
+
+.qr-wall-item h3 {
+  margin: 0 0 8px;
+}
+
+.qr-wall-item img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.list-clean {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.list-clean li {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
