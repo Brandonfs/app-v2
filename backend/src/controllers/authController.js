@@ -44,6 +44,61 @@ const register = async (req, res, next) => {
   }
 };
 
+const bootstrapAdmin = async (req, res, next) => {
+  try {
+    if (!env.bootstrapAdminToken) {
+      return res.status(403).json({ message: 'Bootstrap admin deshabilitado.' });
+    }
+
+    const providedToken = req.headers['x-bootstrap-token'] || req.body.bootstrapToken;
+    if (!providedToken || providedToken !== env.bootstrapAdminToken) {
+      return res.status(401).json({ message: 'Token de bootstrap invalido.' });
+    }
+
+    const { fullName, username, password, branchId } = req.body;
+
+    if (!fullName || !username || !password) {
+      return res.status(400).json({ message: 'Nombre, usuario y password son obligatorios.' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres.' });
+    }
+
+    const adminsCountRow = await db('users')
+      .where({ role: 'admin', is_active: 1 })
+      .count({ count: 'id' })
+      .first();
+    const adminsCount = Number(adminsCountRow?.count || 0);
+
+    if (adminsCount > 0) {
+      return res.status(409).json({ message: 'Ya existe al menos un usuario admin activo.' });
+    }
+
+    const exists = await db('users').where({ username }).first();
+    if (exists) {
+      return res.status(409).json({ message: 'El usuario ya existe.' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const [id] = await db('users').insert({
+      full_name: fullName,
+      username,
+      password_hash: passwordHash,
+      role: 'admin',
+      branch_id: branchId || null,
+      is_active: true
+    });
+
+    return res.status(201).json({
+      message: 'Admin inicial creado correctamente.',
+      userId: id
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -99,4 +154,4 @@ const me = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, me };
+module.exports = { register, bootstrapAdmin, login, me };

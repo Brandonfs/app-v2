@@ -132,3 +132,25 @@ Notas:
 - Cambia secretos JWT/QR en produccion.
 - El frontend guarda token en localStorage para la demo.
 - Para endurecer seguridad en escenarios reales, migrar a cookies httpOnly y refresh tokens.
+
+## Crear primer admin sin Shell (Render Free)
+
+Si no puedes usar Shell en Render, crea el primer admin por API con token de bootstrap:
+
+1. En Environment del servicio, agrega BOOTSTRAP_ADMIN_TOKEN con un valor largo y secreto.
+2. Haz deploy del servicio.
+3. Ejecuta una peticion POST a /api/auth/bootstrap-admin con header x-bootstrap-token y el body del nuevo admin.
+4. Luego elimina BOOTSTRAP_ADMIN_TOKEN y vuelve a deploy para desactivar el endpoint.
+
+Ejemplo de body JSON:
+
+{
+  "fullName": "Admin Inicial",
+  "username": "admin",
+  "password": "Admin123*"
+}
+
+Reglas:
+
+- Solo funciona si no existe ningun admin activo.
+- Requiere token correcto.

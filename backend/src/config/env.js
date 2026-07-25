@@ -12,6 +12,7 @@ const env = {
   jwtSecret: process.env.JWT_SECRET || 'change-me-in-production',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '8h',
   qrSecret: process.env.QR_SECRET || process.env.JWT_SECRET || 'change-me-qr-secret',
+  bootstrapAdminToken: process.env.BOOTSTRAP_ADMIN_TOKEN || '',
   lateAfter: process.env.LATE_AFTER || '09:05',
   dbClient: process.env.DB_CLIENT || 'sqlite3',
   dbFilename: process.env.DB_FILENAME || path.join(process.cwd(), 'backend', 'data', 'app.db'),
