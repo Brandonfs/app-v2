@@ -3,7 +3,7 @@ const QRCode = require('qrcode');
 const db = require('../config/database');
 const env = require('../config/env');
 
-const createQrForBranch = async ({ branchId, generatedBy }) => {
+const createQrForBranch = async ({ branchId, generatedBy, expiresIn = '30s' }) => {
   const nonce = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
   const generatedAt = new Date().toISOString();
   const payload = {
@@ -13,14 +13,14 @@ const createQrForBranch = async ({ branchId, generatedBy }) => {
     generatedBy: generatedBy || null
   };
 
-  const qrToken = jwt.sign(payload, env.qrSecret, { expiresIn: '30s' });
+  const qrToken = jwt.sign(payload, env.qrSecret, { expiresIn });
   const qrDataUrl = await QRCode.toDataURL(qrToken);
 
   return {
     qrToken,
     qrDataUrl,
     generatedAt,
-    expiresInSeconds: 30
+    expiresInSeconds: expiresIn === '10m' ? 600 : 5
   };
 };
 
@@ -36,7 +36,8 @@ const generateQr = async (req, res, next) => {
     const branchId = req.body.branchId || req.user.branch_id || null;
     const qr = await createQrForBranch({
       branchId,
-      generatedBy: req.user.id
+      generatedBy: req.user.id,
+      expiresIn: '10m'
     });
 
     return res.json(qr);
@@ -45,11 +46,11 @@ const generateQr = async (req, res, next) => {
   }
 };
 
-const getPublicBranchQrs = async (req, res, next) => {
+const getLiveBranchQrs = async (req, res, next) => {
   try {
     const branches = await db('branches').select('id', 'name').orderBy('name', 'asc');
     const items = await Promise.all(branches.map(async (branch) => {
-      const qr = await createQrForBranch({ branchId: branch.id, generatedBy: null });
+      const qr = await createQrForBranch({ branchId: branch.id, generatedBy: null, expiresIn: '5s' });
       return {
         branchId: branch.id,
         branchName: branch.name,
@@ -91,6 +92,7 @@ const checkin = async (req, res, next) => {
     return res.status(201).json({
       message: status === 'late' ? 'Asistencia registrada como tardia.' : 'Asistencia registrada a tiempo.',
       status,
+      qrGeneratedAt: decoded.generatedAt,
       checkedInAt: now.toISOString(),
       branchName: branch?.name || 'Sin sede'
     });
@@ -110,6 +112,7 @@ const getMyAttendance = async (req, res, next) => {
       .orderBy('a.checked_in_at', 'desc')
       .select(
         'a.id',
+        'a.qr_generated_at as qrGeneratedAt',
         'a.checked_in_at as checkedInAt',
         'a.status',
         'b.name as branchName'
@@ -133,7 +136,8 @@ const buildReportQuery = (filters) => {
       'u.role',
       'b.name as branchName',
       'a.checked_in_at as checkedInAt',
-      'a.status'
+      'a.status',
+      'a.qr_generated_at as qrGeneratedAt'
     )
     .orderBy('a.checked_in_at', 'desc');
 
@@ -161,7 +165,7 @@ const getAttendanceReport = async (req, res, next) => {
 
 module.exports = {
   generateQr,
-  getPublicBranchQrs,
+  getLiveBranchQrs,
   checkin,
   getMyAttendance,
   getAttendanceReport,

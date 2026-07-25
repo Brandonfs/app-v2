@@ -1,4 +1,7 @@
 const routeByRole = (role) => {
+  if (role === 'qr_operator') {
+    return '/generator';
+  }
   if (role === 'admin' || role === 'supervisor') {
     return '/admin';
   }
@@ -33,8 +36,7 @@ const attachTopbar = (activePath) => {
       <p>${user.role} | Cedula: ${user.cedula || user.username}</p>
     </div>
     <div class="nav-links">
-      <a href="/user">Usuario</a>
-      <a href="/scan">Escaneo QR</a>
+      ${user.role === 'qr_operator' ? '<a href="/generator">QR por sede</a>' : '<a href="/user">Usuario</a><a href="/scan">Escaneo QR</a>'}
       ${(user.role === 'admin' || user.role === 'supervisor') ? '<a href="/admin">Administracion</a>' : ''}
       <button id="logout" class="btn-link">Salir</button>
     </div>

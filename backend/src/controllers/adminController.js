@@ -16,6 +16,7 @@ const listUsers = async (req, res, next) => {
         'u.created_at as createdAt',
         'b.name as branchName'
       )
+      .whereNot('u.role', 'qr_operator')
       .orderBy('u.id', 'asc');
 
     return res.json(users);

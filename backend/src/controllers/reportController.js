@@ -26,6 +26,7 @@ const exportExcel = async (req, res, next) => {
       { header: 'Cedula', key: 'cedula', width: 20 },
       { header: 'Rol', key: 'role', width: 14 },
       { header: 'Sucursal', key: 'branchName', width: 20 },
+      { header: 'QR Generado', key: 'qrGeneratedAt', width: 26 },
       { header: 'Fecha/Hora', key: 'checkedInAt', width: 26 },
       { header: 'Estado', key: 'status', width: 14 }
     ];
@@ -33,6 +34,7 @@ const exportExcel = async (req, res, next) => {
     records.forEach((record) => {
       sheet.addRow({
         ...record,
+        qrGeneratedAt: record.qrGeneratedAt ? new Date(record.qrGeneratedAt).toLocaleString('es-ES') : '-',
         checkedInAt: new Date(record.checkedInAt).toLocaleString('es-ES')
       });
     });
@@ -65,7 +67,7 @@ const exportPdf = async (req, res, next) => {
     doc.moveDown();
 
     records.forEach((record) => {
-      const line = `${record.id} | ${record.fullName} | ${record.cedula} | ${record.branchName || '-'} | ${new Date(record.checkedInAt).toLocaleString('es-ES')} | ${record.status}`;
+      const line = `${record.id} | ${record.fullName} | ${record.cedula} | ${record.branchName || '-'} | QR: ${record.qrGeneratedAt ? new Date(record.qrGeneratedAt).toLocaleString('es-ES') : '-'} | Registro: ${new Date(record.checkedInAt).toLocaleString('es-ES')} | ${record.status}`;
       doc.fillColor(record.status === 'late' ? 'red' : 'black').fontSize(9).text(line);
     });
 

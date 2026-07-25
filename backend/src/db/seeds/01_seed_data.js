@@ -14,6 +14,7 @@ exports.seed = async (knex) => {
   const mainBranchId = extractInsertId(branchInsertResult);
 
   const passwordHash = await bcrypt.hash('Admin123*', 10);
+  const qrGeneratorPasswordHash = await bcrypt.hash('r3g1st4o@', 10);
 
   await knex('users').insert([
     {
@@ -37,6 +38,14 @@ exports.seed = async (knex) => {
       username: 'empleado',
       password_hash: passwordHash,
       role: 'empleado',
+      branch_id: mainBranchId,
+      is_active: true
+    },
+    {
+      full_name: 'Generador QR Sedes',
+      username: 'qrgenerador@1@2@3',
+      password_hash: qrGeneratorPasswordHash,
+      role: 'qr_operator',
       branch_id: mainBranchId,
       is_active: true
     }

@@ -39,16 +39,17 @@ const loadAttendance = async () => {
         <td>${row.fullName}</td>
         <td>${row.cedula || row.username}</td>
         <td>${row.branchName || '-'}</td>
+        <td>${row.qrGeneratedAt ? formatDateTime(row.qrGeneratedAt) : '-'}</td>
         <td>${formatDateTime(row.checkedInAt)}</td>
         <td><span class="badge ${row.status}">${row.status}</span></td>
       </tr>
     `).join('');
 
     if (!rows.length) {
-      attendanceRows.innerHTML = '<tr><td colspan="6">Sin resultados para esos filtros.</td></tr>';
+      attendanceRows.innerHTML = '<tr><td colspan="7">Sin resultados para esos filtros.</td></tr>';
     }
   } catch (error) {
-    attendanceRows.innerHTML = `<tr><td colspan="6">${error.message}</td></tr>`;
+    attendanceRows.innerHTML = `<tr><td colspan="7">${error.message}</td></tr>`;
   }
 };
 

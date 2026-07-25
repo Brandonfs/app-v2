@@ -22,6 +22,7 @@ const loadAttendance = async () => {
       .map((row) => `
         <tr class="${row.status === 'late' ? 'late-row' : ''}">
           <td>${row.id}</td>
+          <td>${row.qrGeneratedAt ? formatDateTime(row.qrGeneratedAt) : '-'}</td>
           <td>${formatDateTime(row.checkedInAt)}</td>
           <td>${row.branchName || '-'}</td>
           <td><span class="badge ${row.status}">${row.status}</span></td>
@@ -30,10 +31,10 @@ const loadAttendance = async () => {
       .join('');
 
     if (!rows.length) {
-      body.innerHTML = '<tr><td colspan="4">No hay asistencias registradas.</td></tr>';
+      body.innerHTML = '<tr><td colspan="5">No hay asistencias registradas.</td></tr>';
     }
   } catch (error) {
-    document.getElementById('my-attendance').innerHTML = `<tr><td colspan="4">${error.message}</td></tr>`;
+    document.getElementById('my-attendance').innerHTML = `<tr><td colspan="5">${error.message}</td></tr>`;
   }
 };
 

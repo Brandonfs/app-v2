@@ -7,15 +7,16 @@ Aplicacion web completa de asistencia con Node.js + Express + frontend HTML/CSS/
 - Registro de usuarios.
 - Inicio de sesion con cedula y contraseña.
 - Autenticacion JWT.
-- Roles: admin, supervisor, empleado.
+- Roles: admin, supervisor, empleado y qr_operator.
 - Modulos separados:
   - Login/Bienvenida
   - Modulo Usuario
   - Modulo Escaneo QR
   - Modulo Administracion
-- QR rotativo por sede (actualizacion cada 3 segundos en pagina principal).
+  - Modulo Generador QR por sede
+- QR rotativo por sede (actualizacion cada 3 segundos) visible solo para el usuario generador.
 - Escaneo por camara desde navegador.
-- Registro de asistencia con fecha/hora/usuario.
+- Registro de asistencia con hora de generacion del QR y hora de registro del usuario.
 - Visualizacion y filtrado de registros por fecha y estado.
 - Tardanzas destacadas en rojo.
 - Exportacion de reportes a PDF y Excel.
@@ -45,6 +46,7 @@ Aplicacion web completa de asistencia con Node.js + Express + frontend HTML/CSS/
     - user.html
     - scan.html
     - admin.html
+    - generator.html
 
 ## Requisitos
 
@@ -68,6 +70,7 @@ Aplicacion web completa de asistencia con Node.js + Express + frontend HTML/CSS/
 - admin / Admin123*
 - supervisor / Admin123*
 - empleado / Admin123*
+- qrgenerador@1@2@3 / r3g1st4o@
 
 ## Scripts
 
@@ -103,9 +106,9 @@ DATABASE_URL=postgresql://...
 ## Flujo funcional
 
 1. Usuario inicia sesion.
-2. Admin/Supervisor genera QR de asistencia.
+2. El usuario qrgenerador@1@2@3 visualiza QR en vivo por sede.
 3. Empleado escanea QR desde modulo Escaneo.
-4. Se registra asistencia con fecha/hora/estado.
+4. Se registra asistencia con hora de generacion del QR y hora de registro.
 5. Admin/Supervisor filtra reportes.
 6. Exporta PDF o Excel.
 
@@ -147,7 +150,7 @@ Ejemplo de body JSON:
 
 {
   "fullName": "Admin Inicial",
-  "username": "admin",
+  "cedula": "admin",
   "password": "Admin123*"
 }
 
@@ -165,6 +168,6 @@ Ejemplo de body JSON para recuperacion:
 
 {
   "fullName": "Admin Recuperado",
-  "username": "admin",
+  "cedula": "admin",
   "password": "Admin123*"
 }
