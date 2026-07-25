@@ -1,7 +1,9 @@
 const ExcelJS = require('exceljs');
 const PDFDocument = require('pdfkit');
 const db = require('../config/database');
-const { buildReportQuery } = require('./attendanceController');
+const env = require('../config/env');
+const { getReportRows } = require('./attendanceController');
+const { formatDateTimeInTimezone } = require('../utils/time');
 
 const saveReportLog = async (userId, filters, fileType) => {
   await db('reports').insert({
@@ -15,7 +17,7 @@ const saveReportLog = async (userId, filters, fileType) => {
 
 const exportExcel = async (req, res, next) => {
   try {
-    const records = await buildReportQuery(req.query);
+    const records = await getReportRows(req.query);
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('Asistencia');
@@ -34,8 +36,8 @@ const exportExcel = async (req, res, next) => {
     records.forEach((record) => {
       sheet.addRow({
         ...record,
-        qrGeneratedAt: record.qrGeneratedAt ? new Date(record.qrGeneratedAt).toLocaleString('es-ES') : '-',
-        checkedInAt: new Date(record.checkedInAt).toLocaleString('es-ES')
+        qrGeneratedAt: formatDateTimeInTimezone(record.qrGeneratedAt, env.appTimezone),
+        checkedInAt: formatDateTimeInTimezone(record.checkedInAt, env.appTimezone)
       });
     });
 
@@ -53,7 +55,7 @@ const exportExcel = async (req, res, next) => {
 
 const exportPdf = async (req, res, next) => {
   try {
-    const records = await buildReportQuery(req.query);
+    const records = await getReportRows(req.query);
 
     await saveReportLog(req.user.id, req.query, 'pdf');
 
@@ -67,7 +69,7 @@ const exportPdf = async (req, res, next) => {
     doc.moveDown();
 
     records.forEach((record) => {
-      const line = `${record.id} | ${record.fullName} | ${record.cedula} | ${record.branchName || '-'} | QR: ${record.qrGeneratedAt ? new Date(record.qrGeneratedAt).toLocaleString('es-ES') : '-'} | Registro: ${new Date(record.checkedInAt).toLocaleString('es-ES')} | ${record.status}`;
+      const line = `${record.id} | ${record.fullName} | ${record.cedula} | ${record.branchName || '-'} | QR: ${formatDateTimeInTimezone(record.qrGeneratedAt, env.appTimezone)} | Registro: ${formatDateTimeInTimezone(record.checkedInAt, env.appTimezone)} | ${record.status}`;
       doc.fillColor(record.status === 'late' ? 'red' : 'black').fontSize(9).text(line);
     });
 

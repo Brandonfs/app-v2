@@ -51,4 +51,8 @@ const request = async (url, options = {}) => {
   return response;
 };
 
-const formatDateTime = (isoDate) => new Date(isoDate).toLocaleString('es-ES');
+const formatDateTime = (isoDate) => new Intl.DateTimeFormat('es-CO', {
+  timeZone: 'America/Bogota',
+  dateStyle: 'short',
+  timeStyle: 'medium'
+}).format(new Date(isoDate));

@@ -14,6 +14,8 @@ const env = {
   qrSecret: process.env.QR_SECRET || process.env.JWT_SECRET || 'change-me-qr-secret',
   bootstrapAdminToken: process.env.BOOTSTRAP_ADMIN_TOKEN || '',
   lateAfter: process.env.LATE_AFTER || '09:05',
+  appTimezone: process.env.APP_TIMEZONE || 'America/Bogota',
+  attendanceCooldownMinutes: Number(process.env.ATTENDANCE_COOLDOWN_MINUTES || 10),
   dbClient: process.env.DB_CLIENT || 'sqlite3',
   dbFilename: process.env.DB_FILENAME || path.join(process.cwd(), 'backend', 'data', 'app.db'),
   databaseUrl: process.env.DATABASE_URL || ''

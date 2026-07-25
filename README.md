@@ -17,8 +17,11 @@ Aplicacion web completa de asistencia con Node.js + Express + frontend HTML/CSS/
 - QR rotativo por sede (actualizacion cada 3 segundos) visible solo para el usuario generador.
 - Escaneo por camara desde navegador.
 - Registro de asistencia con hora de generacion del QR y hora de registro del usuario.
+- Zona horaria operativa en Colombia (America/Bogota).
 - Visualizacion y filtrado de registros por fecha y estado.
+- Filtro de tardanza por hora configurable (ejemplo: 09:05).
 - Tardanzas destacadas en rojo.
+- Cooldown de 10 minutos por usuario para volver a registrar asistencia.
 - Exportacion de reportes a PDF y Excel.
 - Administracion de credenciales por cedula (busqueda y reseteo de contraseña).
 - Interfaz responsive y mobile-friendly.
@@ -129,6 +132,8 @@ Notas:
 - Si quieres cargar usuarios demo, ejecuta npm run seed una sola vez desde Shell del servicio.
 - Si aparece error por limite Free (cannot have more than one active free tier database), elimina la DB Free previa o cambia plan: free por starter en render.yaml.
 - JWT_SECRET y QR_SECRET se autogeneran con generateValue en el blueprint.
+- APP_TIMEZONE define la zona horaria operativa (recomendado: America/Bogota).
+- ATTENDANCE_COOLDOWN_MINUTES define minutos minimos entre registros del mismo usuario.
 - Si el plan Free no esta disponible en tu cuenta, cambia plan: free por starter en render.yaml para web y database.
 
 ## Seguridad y notas

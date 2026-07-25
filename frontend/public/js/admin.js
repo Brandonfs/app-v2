@@ -9,6 +9,7 @@ const usersRows = document.getElementById('users-rows');
 const startDate = document.getElementById('start-date');
 const endDate = document.getElementById('end-date');
 const statusFilter = document.getElementById('status-filter');
+const lateAfterFilter = document.getElementById('late-after-filter');
 const branchesList = document.getElementById('branches-list');
 const branchNameInput = document.getElementById('branch-name');
 const branchLocationInput = document.getElementById('branch-location');
@@ -26,6 +27,7 @@ const buildQuery = () => {
   if (startDate.value) params.set('startDate', startDate.value);
   if (endDate.value) params.set('endDate', endDate.value);
   if (statusFilter.value) params.set('status', statusFilter.value);
+  if (lateAfterFilter.value) params.set('lateAfter', lateAfterFilter.value);
   return params.toString();
 };
 
@@ -70,12 +72,11 @@ const loadUsers = async () => {
               </select>`
             : user.role}
         </td>
-        <td>${user.branchName || '-'}</td>
         <td>${currentUser.role === 'admin' ? `<button data-update-id="${user.id}">Guardar</button>` : '-'}</td>
       </tr>
     `).join('');
   } catch (error) {
-    usersRows.innerHTML = `<tr><td colspan="6">${error.message}</td></tr>`;
+    usersRows.innerHTML = `<tr><td colspan="5">${error.message}</td></tr>`;
   }
 };
 

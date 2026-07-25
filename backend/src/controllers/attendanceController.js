@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const QRCode = require('qrcode');
 const db = require('../config/database');
 const env = require('../config/env');
+const { isLateByThreshold } = require('../utils/time');
 
 const createQrForBranch = async ({ branchId, generatedBy, expiresIn = '30s' }) => {
   const nonce = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
@@ -25,10 +26,7 @@ const createQrForBranch = async ({ branchId, generatedBy, expiresIn = '30s' }) =
 };
 
 const calculateStatus = (date) => {
-  const [hours, minutes] = env.lateAfter.split(':').map(Number);
-  const threshold = new Date(date);
-  threshold.setHours(hours, minutes, 0, 0);
-  return date > threshold ? 'late' : 'on_time';
+  return isLateByThreshold(date, env.lateAfter, env.appTimezone) ? 'late' : 'on_time';
 };
 
 const generateQr = async (req, res, next) => {
@@ -73,6 +71,25 @@ const checkin = async (req, res, next) => {
 
     const decoded = jwt.verify(qrToken, env.qrSecret);
     const now = new Date();
+
+    const latestAttendance = await db('attendance')
+      .where({ user_id: req.user.id })
+      .orderBy('checked_in_at', 'desc')
+      .first('checked_in_at');
+
+    if (latestAttendance?.checked_in_at) {
+      const lastCheckin = new Date(latestAttendance.checked_in_at);
+      const cooldownMs = Math.max(1, Number(env.attendanceCooldownMinutes || 10)) * 60 * 1000;
+      const nextAllowedAt = new Date(lastCheckin.getTime() + cooldownMs);
+
+      if (now < nextAllowedAt) {
+        return res.status(429).json({
+          message: `Debes esperar ${env.attendanceCooldownMinutes} minutos para volver a registrar asistencia.`,
+          nextAllowedAt: nextAllowedAt.toISOString()
+        });
+      }
+    }
+
     const status = calculateStatus(now);
 
     const branchId = decoded.branchId || req.user.branch_id || null;
@@ -147,16 +164,41 @@ const buildReportQuery = (filters) => {
   if (filters.endDate) {
     query.whereRaw('date(a.checked_in_at) <= ?', [filters.endDate]);
   }
-  if (filters.status) {
+  if (filters.status && !filters.lateAfter) {
     query.where('a.status', filters.status);
   }
 
   return query;
 };
 
+const applyLateHourFilter = (records, filters) => {
+  if (!filters.lateAfter) {
+    return records;
+  }
+
+  const withDerivedStatus = records.map((record) => {
+    const isLate = isLateByThreshold(new Date(record.checkedInAt), filters.lateAfter, env.appTimezone);
+    return {
+      ...record,
+      status: isLate ? 'late' : 'on_time'
+    };
+  });
+
+  if (!filters.status) {
+    return withDerivedStatus;
+  }
+
+  return withDerivedStatus.filter((record) => record.status === filters.status);
+};
+
+const getReportRows = async (filters) => {
+  const rawRecords = await buildReportQuery(filters);
+  return applyLateHourFilter(rawRecords, filters);
+};
+
 const getAttendanceReport = async (req, res, next) => {
   try {
-    const records = await buildReportQuery(req.query);
+    const records = await getReportRows(req.query);
     return res.json(records);
   } catch (error) {
     return next(error);
@@ -169,5 +211,6 @@ module.exports = {
   checkin,
   getMyAttendance,
   getAttendanceReport,
-  buildReportQuery
+  buildReportQuery,
+  getReportRows
 };
