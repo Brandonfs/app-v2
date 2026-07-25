@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/database');
 const env = require('../config/env');
+const { extractInsertId } = require('../utils/dbHelpers');
 
 const signToken = (user) => jwt.sign(
   { role: user.role, username: user.username },
@@ -29,7 +30,7 @@ const register = async (req, res, next) => {
     const safeRole = 'empleado';
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const [id] = await db('users').insert({
+    const insertResult = await db('users').insert({
       full_name: fullName,
       username,
       password_hash: passwordHash,
@@ -37,6 +38,7 @@ const register = async (req, res, next) => {
       branch_id: branchId || null,
       is_active: true
     });
+    const id = extractInsertId(insertResult);
 
     return res.status(201).json({ message: 'Usuario registrado correctamente.', userId: id });
   } catch (error) {
@@ -81,7 +83,7 @@ const bootstrapAdmin = async (req, res, next) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const [id] = await db('users').insert({
+    const insertResult = await db('users').insert({
       full_name: fullName,
       username,
       password_hash: passwordHash,
@@ -89,6 +91,7 @@ const bootstrapAdmin = async (req, res, next) => {
       branch_id: branchId || null,
       is_active: true
     });
+    const id = extractInsertId(insertResult);
 
     return res.status(201).json({
       message: 'Admin inicial creado correctamente.',

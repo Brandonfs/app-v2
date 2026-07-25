@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const { extractInsertId } = require('../utils/dbHelpers');
 
 const listUsers = async (req, res, next) => {
   try {
@@ -57,7 +58,8 @@ const createBranch = async (req, res, next) => {
       return res.status(400).json({ message: 'El nombre de la sucursal es obligatorio.' });
     }
 
-    const [id] = await db('branches').insert({ name, location: location || null });
+    const insertResult = await db('branches').insert({ name, location: location || null });
+    const id = extractInsertId(insertResult);
     return res.status(201).json({ message: 'Sucursal creada.', id });
   } catch (error) {
     if (String(error.message).includes('UNIQUE')) {

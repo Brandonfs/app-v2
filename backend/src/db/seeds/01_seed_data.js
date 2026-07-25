@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { extractInsertId } = require('../../utils/dbHelpers');
 
 exports.seed = async (knex) => {
   await knex('reports').del();
@@ -6,10 +7,11 @@ exports.seed = async (knex) => {
   await knex('users').del();
   await knex('branches').del();
 
-  const [mainBranchId] = await knex('branches').insert([
+  const branchInsertResult = await knex('branches').insert([
     { name: 'Sucursal Central', location: 'Centro' },
     { name: 'Sucursal Norte', location: 'Zona Norte' }
   ]);
+  const mainBranchId = extractInsertId(branchInsertResult);
 
   const passwordHash = await bcrypt.hash('Admin123*', 10);
 
