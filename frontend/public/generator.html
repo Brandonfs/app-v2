@@ -17,6 +17,15 @@
         <p>Cargando QR por sede...</p>
       </div>
     </section>
+
+    <div id="qr-fullscreen-viewer" class="qr-fullscreen-viewer" aria-hidden="true">
+      <div class="qr-fullscreen-card">
+        <button id="close-fullscreen-viewer" class="qr-fullscreen-close" type="button">Cerrar</button>
+        <h3 id="fullscreen-branch-name"></h3>
+        <img id="fullscreen-qr-image" src="" alt="QR en pantalla completa" />
+        <p id="fullscreen-generated-at"></p>
+      </div>
+    </div>
   </main>
 
   <script src="/js/api.js"></script>

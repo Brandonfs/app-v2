@@ -10,7 +10,22 @@
   <main class="shell">
     <header id="topbar" class="topbar view-card"></header>
 
-    <section class="view-card admin-group-card">
+    <div class="admin-layout">
+      <aside class="view-card admin-sidebar">
+        <details open>
+          <summary>Menu de secciones</summary>
+          <nav class="admin-sidebar-nav">
+            <a href="#sec-reportes">Reportes y asistencia</a>
+            <a href="#sec-usuarios">Usuarios y roles</a>
+            <a href="#sec-credenciales">Recuperar credenciales</a>
+            <a href="#sec-sedes">Crear sede</a>
+          </nav>
+        </details>
+      </aside>
+
+      <div class="admin-content">
+
+    <section id="sec-reportes" class="view-card admin-group-card">
       <div class="section-brand">
         <img src="/images/logo.png" alt="Logo Asistencia QR" class="section-brand-logo" />
         <span>Asistencia QR</span>
@@ -67,7 +82,7 @@
       </article>
     </section>
 
-    <section class="view-card admin-group-card">
+    <section id="sec-usuarios" class="view-card admin-group-card">
       <div class="section-brand">
         <img src="/images/logo.png" alt="Logo Asistencia QR" class="section-brand-logo" />
         <span>Asistencia QR</span>
@@ -90,7 +105,7 @@
       </div>
     </section>
 
-    <section class="view-card admin-group-card">
+    <section id="sec-credenciales" class="view-card admin-group-card">
       <div class="section-brand">
         <img src="/images/logo.png" alt="Logo Asistencia QR" class="section-brand-logo" />
         <span>Asistencia QR</span>
@@ -108,7 +123,7 @@
       <button id="reset-password-btn" disabled>Resetear contraseña</button>
     </section>
 
-    <section class="view-card admin-group-card">
+    <section id="sec-sedes" class="view-card admin-group-card">
       <div class="section-brand">
         <img src="/images/logo.png" alt="Logo Asistencia QR" class="section-brand-logo" />
         <span>Asistencia QR</span>
@@ -125,6 +140,8 @@
       <p id="branch-message" class="message"></p>
       <ul id="branches-list" class="list-clean"></ul>
     </section>
+      </div>
+    </div>
   </main>
 
   <script src="/js/api.js"></script>

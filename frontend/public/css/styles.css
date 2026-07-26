@@ -274,6 +274,55 @@ select:focus {
   color: #7a3f1b;
 }
 
+.admin-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.admin-sidebar {
+  position: sticky;
+  top: 16px;
+}
+
+.admin-sidebar details {
+  width: 100%;
+}
+
+.admin-sidebar summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #7a3f1b;
+  margin-bottom: 12px;
+}
+
+.admin-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-sidebar-nav a {
+  text-decoration: none;
+  color: #7a3f1b;
+  background: #fff4ea;
+  border: 1px solid #f4c7a7;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 700;
+}
+
+.admin-sidebar-nav a.active {
+  background: linear-gradient(135deg, var(--accent), #ff8d4b);
+  color: #fff;
+  border-color: transparent;
+}
+
+.admin-content {
+  min-width: 0;
+}
+
 .section-help {
   margin-top: 0;
   margin-bottom: 14px;
@@ -309,6 +358,58 @@ select:focus {
 .qr-wall-item img {
   width: 100%;
   border-radius: 8px;
+}
+
+.open-fullscreen-btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.qr-fullscreen-viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 24, 15, 0.78);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.qr-fullscreen-viewer.open {
+  display: flex;
+}
+
+.qr-fullscreen-card {
+  width: min(900px, 95vw);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+}
+
+.qr-fullscreen-card h3 {
+  margin: 8px 0 12px;
+  color: #7a3f1b;
+}
+
+.qr-fullscreen-card img {
+  width: min(78vh, 90vw);
+  max-width: 620px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.qr-fullscreen-card p {
+  margin: 12px 0 0;
+  font-weight: 700;
+}
+
+.qr-fullscreen-close {
+  display: inline-block;
+  margin-left: auto;
 }
 
 .list-clean {
@@ -398,6 +499,14 @@ th {
     grid-template-columns: 1fr;
   }
 
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    position: static;
+  }
+
   .shell {
     padding: 18px;
   }
@@ -460,5 +569,14 @@ th {
   .brand-logo {
     width: 52px;
     height: 52px;
+  }
+
+  .qr-fullscreen-card {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .qr-fullscreen-card img {
+    width: min(72vh, 92vw);
   }
 }

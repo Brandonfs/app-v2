@@ -22,6 +22,46 @@ const resetPasswordButton = document.getElementById('reset-password-btn');
 
 let foundCedula = null;
 
+const setupSidebarSectionHighlight = () => {
+  const navLinks = Array.from(document.querySelectorAll('.admin-sidebar-nav a[href^="#"]'));
+  if (!navLinks.length) return;
+
+  const sections = navLinks
+    .map((link) => document.querySelector(link.getAttribute('href')))
+    .filter(Boolean);
+
+  if (!sections.length) return;
+
+  const setActiveLink = (sectionId) => {
+    navLinks.forEach((link) => {
+      const isActive = link.getAttribute('href') === `#${sectionId}`;
+      link.classList.toggle('active', isActive);
+    });
+  };
+
+  // Default active section when entering the page.
+  setActiveLink(sections[0].id);
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (visible?.target?.id) {
+        setActiveLink(visible.target.id);
+      }
+    },
+    {
+      root: null,
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: [0.2, 0.4, 0.6]
+    }
+  );
+
+  sections.forEach((section) => observer.observe(section));
+};
+
 const buildQuery = () => {
   const params = new URLSearchParams();
   if (startDate.value) params.set('startDate', startDate.value);
@@ -229,4 +269,5 @@ usersRows.addEventListener('click', async (event) => {
 loadAttendance();
 loadUsers();
 loadBranches();
+setupSidebarSectionHighlight();
 }
