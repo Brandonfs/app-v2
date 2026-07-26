@@ -12,6 +12,7 @@
 
     <section class="view-card">
       <h2>Filtros de reporte</h2>
+      <p class="section-help">Usa estos filtros para buscar asistencias por fecha y estado antes de exportar.</p>
       <div class="grid-2">
         <label>Fecha inicio
           <input type="date" id="start-date" />
@@ -39,41 +40,48 @@
 
     <section class="view-card">
       <h2>Registros de asistencia</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Cedula</th>
-            <th>Sucursal</th>
-            <th>QR generado</th>
-            <th>Fecha/Hora</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody id="attendance-rows"></tbody>
-      </table>
+      <p class="section-help">Aqui veras los resultados del filtro aplicado.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Cedula</th>
+              <th>Sede</th>
+              <th>QR generado</th>
+              <th>Fecha/Hora</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="attendance-rows"></tbody>
+        </table>
+      </div>
     </section>
 
     <section class="view-card">
       <h2>Usuarios y roles</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Cedula</th>
-            <th>Rol</th>
-            <th>Accion</th>
-          </tr>
-        </thead>
-        <tbody id="users-rows"></tbody>
-      </table>
+      <p class="section-help">Solo admin puede cambiar roles o restablecer credenciales.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Cedula</th>
+              <th>Rol</th>
+              <th>Accion</th>
+            </tr>
+          </thead>
+          <tbody id="users-rows"></tbody>
+        </table>
+      </div>
     </section>
 
     <section class="grid-2">
       <article class="view-card">
         <h2>Recuperar credenciales por cedula</h2>
+        <p class="section-help">Busca un usuario por cedula y define una nueva contraseña segura.</p>
         <label>Cedula
           <input type="text" id="search-cedula" placeholder="Ej: 10203040" />
         </label>
@@ -87,6 +95,7 @@
 
       <article class="view-card">
         <h2>Crear sede</h2>
+        <p class="section-help">Registra una sede para habilitar generacion y escaneo de QR por ubicacion.</p>
         <label>Nombre de sede
           <input type="text" id="branch-name" placeholder="Sucursal Centro" />
         </label>

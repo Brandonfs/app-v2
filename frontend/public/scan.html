@@ -13,7 +13,7 @@
     <section class="grid-2">
       <article class="view-card">
         <h2>Generar QR de asistencia</h2>
-        <p>Disponible para admin y supervisor.</p>
+        <p class="section-help">Disponible para admin y supervisor. Elige sede y genera el codigo.</p>
         <label>Sede para QR
           <select id="branch-select"></select>
         </label>
@@ -23,7 +23,7 @@
 
       <article class="view-card">
         <h2>Escanear QR</h2>
-        <p>Apunta la camara al codigo para registrar asistencia.</p>
+        <p class="section-help">Apunta la camara al codigo para registrar asistencia automaticamente.</p>
         <div id="reader" class="qr-box"></div>
         <button id="start-scan">Iniciar escaneo</button>
         <button id="stop-scan">Detener</button>
@@ -32,6 +32,7 @@
 
     <section class="view-card">
       <h2>Resultado</h2>
+      <p class="section-help">Aqui veras si el registro fue exitoso o si hubo alguna validacion.</p>
       <p id="scan-message" class="message"></p>
     </section>
   </main>
