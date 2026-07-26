@@ -70,6 +70,18 @@ body {
   margin-bottom: 12px;
 }
 
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
 .hero-card p,
 .hero-card li,
 p {
@@ -178,6 +190,23 @@ select:focus {
   border-left: 6px solid var(--ok);
 }
 
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-logo {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.topbar-meta p,
+.topbar-brand p {
+  margin: 2px 0 0;
+}
+
 .nav-links {
   display: flex;
   gap: 10px;
@@ -208,6 +237,26 @@ select:focus {
 .view-card h2 {
   margin-top: 0;
   margin-bottom: 8px;
+}
+
+.section-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid #f4c7a7;
+  background: #fff4ea;
+  color: #8a4318;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.section-brand-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .section-help {
@@ -387,5 +436,14 @@ th {
   .topbar {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .brand-lockup {
+    gap: 10px;
+  }
+
+  .brand-logo {
+    width: 52px;
+    height: 52px;
   }
 }

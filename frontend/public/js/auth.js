@@ -31,7 +31,14 @@ const attachTopbar = (activePath) => {
   if (!topbar || !user) return;
 
   topbar.innerHTML = `
-    <div>
+    <div class="topbar-brand">
+      <img src="/images/logo.png" alt="Logo Asistencia QR" class="topbar-logo" />
+      <div>
+        <strong>Asistencia QR</strong>
+        <p>${user.role}</p>
+      </div>
+    </div>
+    <div class="topbar-meta">
       <strong>${user.fullName}</strong>
       <p>${user.role} | Cedula: ${user.cedula || user.username}</p>
     </div>
