@@ -259,6 +259,21 @@ select:focus {
   object-fit: contain;
 }
 
+.admin-group-card {
+  border-left: 6px solid var(--accent);
+}
+
+.admin-subsection + .admin-subsection {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line);
+}
+
+.admin-subsection h3 {
+  margin: 0 0 8px;
+  color: #7a3f1b;
+}
+
 .section-help {
   margin-top: 0;
   margin-bottom: 14px;

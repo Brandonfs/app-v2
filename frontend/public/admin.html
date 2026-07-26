@@ -10,64 +10,64 @@
   <main class="shell">
     <header id="topbar" class="topbar view-card"></header>
 
-    <section class="view-card">
+    <section class="view-card admin-group-card">
       <div class="section-brand">
         <img src="/images/logo.png" alt="Logo Asistencia QR" class="section-brand-logo" />
         <span>Asistencia QR</span>
       </div>
-      <h2>Filtros de reporte</h2>
-      <p class="section-help">Usa estos filtros para buscar asistencias por fecha y estado antes de exportar.</p>
-      <div class="grid-2">
-        <label>Fecha inicio
-          <input type="date" id="start-date" />
-        </label>
-        <label>Fecha fin
-          <input type="date" id="end-date" />
-        </label>
-        <label>Estado
-          <select id="status-filter">
-            <option value="">Todos</option>
-            <option value="on_time">A tiempo</option>
-            <option value="late">Tardia</option>
-          </select>
-        </label>
-        <label>Hora de tardanza (filtro)
-          <input type="time" id="late-after-filter" value="09:05" />
-        </label>
-      </div>
-      <div class="nav-links">
-        <button id="filter-btn">Filtrar</button>
-        <button id="export-excel">Exportar Excel</button>
-        <button id="export-pdf">Exportar PDF</button>
-      </div>
+      <h2>Filtros de reporte y registros de asistencia</h2>
+
+      <article class="admin-subsection">
+        <h3>Filtros de reporte</h3>
+        <p class="section-help">Usa estos filtros para buscar asistencias por fecha y estado antes de exportar.</p>
+        <div class="grid-2">
+          <label>Fecha inicio
+            <input type="date" id="start-date" />
+          </label>
+          <label>Fecha fin
+            <input type="date" id="end-date" />
+          </label>
+          <label>Estado
+            <select id="status-filter">
+              <option value="">Todos</option>
+              <option value="on_time">A tiempo</option>
+              <option value="late">Tardia</option>
+            </select>
+          </label>
+          <label>Hora de tardanza (filtro)
+            <input type="time" id="late-after-filter" value="09:05" />
+          </label>
+        </div>
+        <div class="nav-links">
+          <button id="filter-btn">Filtrar</button>
+          <button id="export-excel">Exportar Excel</button>
+          <button id="export-pdf">Exportar PDF</button>
+        </div>
+      </article>
+
+      <article class="admin-subsection">
+        <h3>Registros de asistencia</h3>
+        <p class="section-help">Aqui veras los resultados del filtro aplicado.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Cedula</th>
+                <th>Sede</th>
+                <th>QR generado</th>
+                <th>Fecha/Hora</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="attendance-rows"></tbody>
+          </table>
+        </div>
+      </article>
     </section>
 
-    <section class="view-card">
-      <div class="section-brand">
-        <img src="/images/logo.png" alt="Logo Asistencia QR" class="section-brand-logo" />
-        <span>Asistencia QR</span>
-      </div>
-      <h2>Registros de asistencia</h2>
-      <p class="section-help">Aqui veras los resultados del filtro aplicado.</p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Cedula</th>
-              <th>Sede</th>
-              <th>QR generado</th>
-              <th>Fecha/Hora</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody id="attendance-rows"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="view-card">
+    <section class="view-card admin-group-card">
       <div class="section-brand">
         <img src="/images/logo.png" alt="Logo Asistencia QR" class="section-brand-logo" />
         <span>Asistencia QR</span>
@@ -90,34 +90,40 @@
       </div>
     </section>
 
-    <section class="grid-2">
-      <article class="view-card">
-        <h2>Recuperar credenciales por cedula</h2>
-        <p class="section-help">Busca un usuario por cedula y define una nueva contraseña segura.</p>
-        <label>Cedula
-          <input type="text" id="search-cedula" placeholder="Ej: 10203040" />
-        </label>
-        <button id="search-user-btn">Buscar usuario</button>
-        <p id="found-user-info" class="message"></p>
-        <label>Nueva contraseña
-          <input type="password" id="new-password" minlength="6" placeholder="Nueva contraseña" />
-        </label>
-        <button id="reset-password-btn" disabled>Resetear contraseña</button>
-      </article>
+    <section class="view-card admin-group-card">
+      <div class="section-brand">
+        <img src="/images/logo.png" alt="Logo Asistencia QR" class="section-brand-logo" />
+        <span>Asistencia QR</span>
+      </div>
+      <h2>Recuperar credenciales</h2>
+      <p class="section-help">Busca un usuario por cedula y define una nueva contraseña segura.</p>
+      <label>Cedula
+        <input type="text" id="search-cedula" placeholder="Ej: 10203040" />
+      </label>
+      <button id="search-user-btn">Buscar usuario</button>
+      <p id="found-user-info" class="message"></p>
+      <label>Nueva contraseña
+        <input type="password" id="new-password" minlength="6" placeholder="Nueva contraseña" />
+      </label>
+      <button id="reset-password-btn" disabled>Resetear contraseña</button>
+    </section>
 
-      <article class="view-card">
-        <h2>Crear sede</h2>
-        <p class="section-help">Registra una sede para habilitar generacion y escaneo de QR por ubicacion.</p>
-        <label>Nombre de sede
-          <input type="text" id="branch-name" placeholder="Sucursal Centro" />
-        </label>
-        <label>Ubicacion
-          <input type="text" id="branch-location" placeholder="Direccion o zona" />
-        </label>
-        <button id="create-branch-btn">Crear sede</button>
-        <p id="branch-message" class="message"></p>
-        <ul id="branches-list" class="list-clean"></ul>
-      </article>
+    <section class="view-card admin-group-card">
+      <div class="section-brand">
+        <img src="/images/logo.png" alt="Logo Asistencia QR" class="section-brand-logo" />
+        <span>Asistencia QR</span>
+      </div>
+      <h2>Crear sede</h2>
+      <p class="section-help">Registra una sede para habilitar generacion y escaneo de QR por ubicacion.</p>
+      <label>Nombre de sede
+        <input type="text" id="branch-name" placeholder="Sede Centro" />
+      </label>
+      <label>Ubicacion
+        <input type="text" id="branch-location" placeholder="Direccion o zona" />
+      </label>
+      <button id="create-branch-btn">Crear sede</button>
+      <p id="branch-message" class="message"></p>
+      <ul id="branches-list" class="list-clean"></ul>
     </section>
   </main>
 
