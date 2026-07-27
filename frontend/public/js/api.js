@@ -1,5 +1,32 @@
 const API_BASE = '/api';
 
+const roleLabel = (role) => {
+  if (role === 'supervisor') return 'Analista de Control y Asistencia';
+  if (role === 'qr_operator') return 'Generador QR';
+  if (role === 'admin') return 'Administrador';
+  if (role === 'empleado') return 'Usuario';
+  return role;
+};
+
+const showToast = (message, kind = 'success') => {
+  let host = document.getElementById('toast-host');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'toast-host';
+    document.body.appendChild(host);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = `toast ${kind}`;
+  toast.textContent = message;
+  host.appendChild(toast);
+
+  window.setTimeout(() => {
+    toast.classList.add('out');
+    window.setTimeout(() => toast.remove(), 240);
+  }, 2600);
+};
+
 const storage = {
   saveSession(data) {
     localStorage.setItem('qrassist_token', data.token);

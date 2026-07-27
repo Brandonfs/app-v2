@@ -32,6 +32,14 @@ const calculateStatus = (date) => {
 const generateQr = async (req, res, next) => {
   try {
     const branchId = req.body.branchId || req.user.branch_id || null;
+
+    if (branchId) {
+      const branch = await db('branches').where({ id: branchId, is_active: 1 }).first('id');
+      if (!branch) {
+        return res.status(400).json({ message: 'La sede seleccionada no esta disponible.' });
+      }
+    }
+
     const qr = await createQrForBranch({
       branchId,
       generatedBy: req.user.id,
@@ -46,7 +54,10 @@ const generateQr = async (req, res, next) => {
 
 const getLiveBranchQrs = async (req, res, next) => {
   try {
-    const branches = await db('branches').select('id', 'name').orderBy('name', 'asc');
+    const branches = await db('branches')
+      .where({ is_active: 1 })
+      .select('id', 'name')
+      .orderBy('name', 'asc');
     const items = await Promise.all(branches.map(async (branch) => {
       const qr = await createQrForBranch({ branchId: branch.id, generatedBy: null, expiresIn: '5s' });
       return {
@@ -94,8 +105,12 @@ const checkin = async (req, res, next) => {
 
     const branchId = decoded.branchId || req.user.branch_id || null;
     const branch = branchId
-      ? await db('branches').where({ id: branchId }).first('name')
+      ? await db('branches').where({ id: branchId, is_active: 1 }).first('name')
       : null;
+
+    if (branchId && !branch) {
+      return res.status(400).json({ message: 'La sede del QR se encuentra deshabilitada.' });
+    }
 
     await db('attendance').insert({
       user_id: req.user.id,

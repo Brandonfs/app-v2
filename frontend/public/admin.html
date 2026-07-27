@@ -19,6 +19,7 @@
             <a href="#sec-usuarios">Usuarios y roles</a>
             <a href="#sec-credenciales">Recuperar credenciales</a>
             <a href="#sec-sedes">Crear sede</a>
+            <a href="#sec-deshabilitados">Deshabilitados</a>
           </nav>
         </details>
       </aside>
@@ -96,7 +97,9 @@
               <th>ID</th>
               <th>Nombre</th>
               <th>Cedula</th>
+              <th>Sede</th>
               <th>Rol</th>
+              <th>Estado</th>
               <th>Accion</th>
             </tr>
           </thead>
@@ -138,7 +141,64 @@
       </label>
       <button id="create-branch-btn">Crear sede</button>
       <p id="branch-message" class="message"></p>
-      <ul id="branches-list" class="list-clean"></ul>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Ubicacion</th>
+              <th>Estado</th>
+              <th>Accion</th>
+            </tr>
+          </thead>
+          <tbody id="branches-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="sec-deshabilitados" class="view-card admin-group-card">
+      <div class="section-brand">
+        <img src="/images/logo.png" alt="Logo Asistencia QR" class="section-brand-logo" />
+        <span>Asistencia QR</span>
+      </div>
+      <h2>Usuarios y sedes deshabilitados</h2>
+      <p class="section-help">Desde aqui puedes revisar elementos deshabilitados y volver a habilitarlos.</p>
+
+      <article class="admin-subsection">
+        <h3>Usuarios deshabilitados</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Cedula</th>
+                <th>Rol</th>
+                <th>Accion</th>
+              </tr>
+            </thead>
+            <tbody id="disabled-users-rows"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="admin-subsection">
+        <h3>Sedes deshabilitadas</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Ubicacion</th>
+                <th>Accion</th>
+              </tr>
+            </thead>
+            <tbody id="disabled-branches-rows"></tbody>
+          </table>
+        </div>
+      </article>
     </section>
       </div>
     </div>

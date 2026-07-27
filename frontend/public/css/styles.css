@@ -5,8 +5,8 @@
   --line: #e6ddcc;
   --accent: #ea6a21;
   --accent-soft: #fff0e5;
-  --ok: #2f8f4e;
-  --ok-soft: #e8f6ed;
+  --ok: #58c87c;
+  --ok-soft: #edf9f1;
   --danger: #b42318;
   --card: #ffffff;
   --shadow: 0 18px 42px rgba(31, 42, 31, 0.12);
@@ -20,7 +20,10 @@ body {
   margin: 0;
   font-family: "DM Sans", "Segoe UI", sans-serif;
   color: var(--ink);
-  background: radial-gradient(circle at 15% 0%, #fff2e6, #fffaf1 58%, #f3faef 100%);
+  background:
+    radial-gradient(circle at 12% -10%, rgba(234, 106, 33, 0.18), transparent 35%),
+    radial-gradient(circle at 88% 0%, rgba(88, 200, 124, 0.2), transparent 32%),
+    linear-gradient(165deg, #f6f8fb 0%, #fefaf3 56%, #eef8f1 100%);
   line-height: 1.5;
   font-size: 16px;
 }
@@ -77,9 +80,16 @@ body {
 }
 
 .brand-logo {
-  width: 64px;
-  height: 64px;
+  width: 96px;
+  height: 96px;
   object-fit: contain;
+}
+
+.hero-subtitle {
+  margin: 0 0 10px;
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: #3e7f54;
 }
 
 .hero-card p,
@@ -197,8 +207,8 @@ select:focus {
 }
 
 .topbar-logo {
-  width: 42px;
-  height: 42px;
+  width: 62px;
+  height: 62px;
   object-fit: contain;
 }
 
@@ -329,7 +339,7 @@ select:focus {
   padding: 10px 12px;
   border-radius: 10px;
   background: var(--ok-soft);
-  border: 1px solid #cce9d5;
+  border: 1px solid #cdeed9;
   color: #2a6d3f;
   font-size: 0.93rem;
 }
@@ -410,6 +420,52 @@ select:focus {
 .qr-fullscreen-close {
   display: inline-block;
   margin-left: auto;
+}
+
+#toast-host {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1400;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  min-width: 260px;
+  max-width: 360px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 10px 26px rgba(20, 24, 20, 0.25);
+  animation: toastIn 0.22s ease;
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #58c87c, #42b96b);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #cc3b33, #a42b22);
+}
+
+.toast.out {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all 0.24s ease;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .list-clean {
@@ -567,8 +623,8 @@ th {
   }
 
   .brand-logo {
-    width: 52px;
-    height: 52px;
+    width: 72px;
+    height: 72px;
   }
 
   .qr-fullscreen-card {

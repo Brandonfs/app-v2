@@ -29,9 +29,11 @@ document.getElementById('login-form').addEventListener('submit', async (event) =
 
     storage.saveSession(data);
     setMessage('Bienvenido. Redirigiendo...', 'success');
+    showToast(`Bienvenido, ${data.user.fullName}.`, 'success');
     window.location.href = routeByRole(data.user.role);
   } catch (error) {
     setMessage(error.message, 'error');
+    showToast(error.message, 'error');
   }
 });
 
@@ -46,8 +48,10 @@ document.getElementById('register-form').addEventListener('submit', async (event
       body: JSON.stringify(payload)
     });
     setMessage('Registro completado. Ahora inicia sesion.', 'success');
+    showToast('Registro exitoso. Ya puedes iniciar sesion.', 'success');
     event.target.reset();
   } catch (error) {
     setMessage(error.message, 'error');
+    showToast(error.message, 'error');
   }
 });

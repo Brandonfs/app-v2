@@ -225,4 +225,27 @@ const me = async (req, res, next) => {
   }
 };
 
-module.exports = { register, bootstrapAdmin, recoverAdmin, login, me };
+const verifyPassword = async (req, res, next) => {
+  try {
+    const password = String(req.body.password || '');
+    if (!password) {
+      return res.status(400).json({ message: 'Debes ingresar una contraseña.' });
+    }
+
+    const user = await db('users').where({ id: req.user.id, is_active: 1 }).first('password_hash');
+    if (!user) {
+      return res.status(401).json({ message: 'No autorizado.' });
+    }
+
+    const validPassword = await bcrypt.compare(password, user.password_hash);
+    if (!validPassword) {
+      return res.status(401).json({ message: 'Contraseña incorrecta.' });
+    }
+
+    return res.json({ message: 'Contraseña verificada.' });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+module.exports = { register, bootstrapAdmin, recoverAdmin, login, me, verifyPassword };

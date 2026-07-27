@@ -8,7 +8,7 @@ const loadProfile = async () => {
   try {
     const me = await request('/auth/me');
     document.getElementById('user-info').textContent =
-      `${me.fullName} | Cedula: ${me.cedula || me.username} | ${me.role} | ${me.branchName || 'Sin sede'}`;
+      `${me.fullName} | Cedula: ${me.cedula || me.username} | ${roleLabel(me.role)} | ${me.branchName || 'Sin sede'}`;
   } catch (error) {
     document.getElementById('user-info').textContent = error.message;
   }

@@ -5,7 +5,7 @@ const routeByRole = (role) => {
   if (role === 'admin' || role === 'supervisor') {
     return '/admin';
   }
-  return '/user';
+  return '/scan';
 };
 
 const requireAuth = (allowedRoles = []) => {
@@ -35,16 +35,18 @@ const attachTopbar = (activePath) => {
       <img src="/images/logo.png" alt="Logo Asistencia QR" class="topbar-logo" />
       <div>
         <strong>Asistencia QR</strong>
-        <p>${user.role}</p>
+        <p>${roleLabel(user.role)}</p>
       </div>
     </div>
     <div class="topbar-meta">
       <strong>${user.fullName}</strong>
-      <p>${user.role} | Cedula: ${user.cedula || user.username}</p>
+      <p>${roleLabel(user.role)} | Cedula: ${user.cedula || user.username}</p>
     </div>
     <div class="nav-links">
-      ${user.role === 'qr_operator' ? '<a href="/generator">QR por sede</a>' : '<a href="/user">Usuario</a><a href="/scan">Escaneo QR</a>'}
-      ${(user.role === 'admin' || user.role === 'supervisor') ? '<a href="/admin">Administracion</a>' : ''}
+      ${user.role === 'qr_operator' ? '<a href="/generator">QR por sede</a>' : ''}
+      ${user.role === 'empleado' ? '<a href="/scan">Escaneo QR</a>' : ''}
+      ${user.role === 'admin' ? '<a href="/admin">Administracion</a><a href="/admin#sec-deshabilitados">Deshabilitados</a>' : ''}
+      ${user.role === 'supervisor' ? '<a href="/admin#sec-reportes">Reportes</a>' : ''}
       <button id="logout" class="btn-link">Salir</button>
     </div>
   `;

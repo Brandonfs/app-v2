@@ -78,12 +78,29 @@ if (!currentUser) {
     }
   };
 
+  const closeFullscreenWithPassword = async () => {
+    const password = window.prompt('Ingresa tu contraseña para cerrar la vista en pantalla completa:');
+    if (password === null) return;
+
+    try {
+      await request('/auth/verify-password', {
+        method: 'POST',
+        body: JSON.stringify({ password })
+      });
+      closeFullscreenViewer();
+      showToast('Vista de pantalla completa cerrada.', 'success');
+    } catch (error) {
+      showToast(error.message || 'Contraseña incorrecta.', 'error');
+    }
+  };
+
   const loadQrs = async () => {
     try {
       const items = await request('/attendance/live-branches-qr');
       renderQrs(items);
     } catch (error) {
       generatorQrList.innerHTML = `<p>${error.message}</p>`;
+      showToast(error.message, 'error');
     }
   };
 
@@ -98,12 +115,7 @@ if (!currentUser) {
     );
   });
 
-  closeFullscreenButton?.addEventListener('click', closeFullscreenViewer);
-  fullscreenViewer?.addEventListener('click', (event) => {
-    if (event.target === fullscreenViewer) {
-      closeFullscreenViewer();
-    }
-  });
+  closeFullscreenButton?.addEventListener('click', closeFullscreenWithPassword);
 
   loadQrs();
   setInterval(loadQrs, 3000);
