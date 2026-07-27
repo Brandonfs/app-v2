@@ -3,6 +3,7 @@ exports.up = async (knex) => {
     table.increments('id').primary();
     table.string('name', 120).notNullable().unique();
     table.string('location', 255).nullable();
+    table.boolean('is_active').notNullable().defaultTo(true);
     table.timestamp('created_at').defaultTo(knex.fn.now());
   });
 

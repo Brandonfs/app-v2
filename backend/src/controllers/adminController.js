@@ -16,7 +16,7 @@ const normalizeBool = (value, fallback = true) => {
 
 const listUsers = async (req, res, next) => {
   try {
-    const includeInactive = req.query.includeInactive === '1';
+    const includeInactive = req.user?.role === 'admin' && req.query.includeInactive === '1';
     const users = await db('users as u')
       .leftJoin('branches as b', 'b.id', 'u.branch_id')
       .select(
@@ -30,7 +30,6 @@ const listUsers = async (req, res, next) => {
         'u.created_at as createdAt',
         'b.name as branchName'
       )
-      .whereNot('u.role', 'qr_operator')
       .modify((query) => {
         if (!includeInactive) {
           query.where('u.is_active', 1);
@@ -186,7 +185,7 @@ const updateUserRole = async (req, res, next) => {
 
 const listBranches = async (req, res, next) => {
   try {
-    const includeInactive = req.query.includeInactive === '1';
+    const includeInactive = req.user?.role === 'admin' && req.query.includeInactive === '1';
     const branches = await db('branches')
       .modify((query) => {
         if (!includeInactive) {
@@ -267,7 +266,6 @@ const getDisabledSummary = async (req, res, next) => {
     const [users, branches] = await Promise.all([
       db('users')
         .where({ is_active: 0 })
-        .whereNot({ role: 'qr_operator' })
         .orderBy('id', 'asc')
         .select('id', 'full_name as fullName', 'username as cedula', 'role'),
       db('branches')

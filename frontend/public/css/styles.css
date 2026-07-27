@@ -217,6 +217,10 @@ select:focus {
   margin: 2px 0 0;
 }
 
+.topbar-meta-secure {
+  opacity: 0.92;
+}
+
 .nav-links {
   display: flex;
   gap: 10px;
@@ -271,6 +275,7 @@ select:focus {
 
 .admin-group-card {
   border-left: 6px solid var(--accent);
+  scroll-margin-top: 90px;
 }
 
 .admin-subsection + .admin-subsection {
@@ -327,6 +332,18 @@ select:focus {
   background: linear-gradient(135deg, var(--accent), #ff8d4b);
   color: #fff;
   border-color: transparent;
+  box-shadow: 0 10px 18px rgba(234, 106, 33, 0.24);
+  transform: translateX(2px);
+}
+
+.table-note {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #edf9f1;
+  color: #2a6d3f;
+  font-weight: 700;
+  font-size: 0.82rem;
 }
 
 .admin-content {
@@ -563,6 +580,29 @@ th {
     position: static;
   }
 
+  .admin-sidebar details {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 10px;
+    background: #fffefb;
+  }
+
+  .admin-sidebar summary {
+    margin-bottom: 10px;
+  }
+
+  .admin-sidebar-nav {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .admin-sidebar-nav a {
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
   .shell {
     padding: 18px;
   }
@@ -616,6 +656,12 @@ th {
   .topbar {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .topbar-meta,
+  .topbar-brand,
+  .topbar-meta-secure {
+    width: 100%;
   }
 
   .brand-lockup {

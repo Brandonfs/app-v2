@@ -12,6 +12,7 @@ if (!currentUser) {
 
   const startDate = document.getElementById('start-date');
   const endDate = document.getElementById('end-date');
+  const branchFilter = document.getElementById('branch-filter');
   const statusFilter = document.getElementById('status-filter');
   const lateAfterFilter = document.getElementById('late-after-filter');
 
@@ -32,6 +33,7 @@ if (!currentUser) {
     const params = new URLSearchParams();
     if (startDate.value) params.set('startDate', startDate.value);
     if (endDate.value) params.set('endDate', endDate.value);
+    if (branchFilter.value) params.set('branchId', branchFilter.value);
     if (statusFilter.value) params.set('status', statusFilter.value);
     if (lateAfterFilter.value) params.set('lateAfter', lateAfterFilter.value);
     return params.toString();
@@ -83,33 +85,45 @@ if (!currentUser) {
     return options.join('');
   };
 
+  const renderBranchFilterOptions = () => {
+    if (!branchFilter) return;
+    branchFilter.innerHTML = ['<option value="">Todas</option>']
+      .concat(
+        branchesCache
+          .filter((branch) => branch.is_active || branch.isActive)
+          .map((branch) => `<option value="${branch.id}">${branch.name}</option>`)
+      )
+      .join('');
+  };
+
   const loadUsers = async () => {
     try {
-      const users = await request('/admin/users?includeInactive=1');
+      const users = await request('/admin/users');
       usersRows.innerHTML = users.map((user) => `
         <tr>
           <td>${user.id}</td>
-          <td><input type="text" value="${user.fullName}" data-user-field="fullName" data-user-id="${user.id}" /></td>
-          <td><input type="text" value="${user.cedula || user.username}" data-user-field="cedula" data-user-id="${user.id}" /></td>
+          <td><input type="text" value="${user.fullName}" data-user-field="fullName" data-user-id="${user.id}" ${user.role === 'qr_operator' ? 'disabled' : ''} /></td>
+          <td><input type="text" value="${user.cedula || user.username}" data-user-field="cedula" data-user-id="${user.id}" ${user.role === 'qr_operator' ? 'disabled' : ''} /></td>
           <td>
-            <select data-user-field="branchId" data-user-id="${user.id}">
+            <select data-user-field="branchId" data-user-id="${user.id}" ${user.role === 'qr_operator' ? 'disabled' : ''}>
               ${branchOptions(user.branchId)}
             </select>
           </td>
           <td>
-            <select data-user-field="role" data-user-id="${user.id}">
+            <select data-user-field="role" data-user-id="${user.id}" ${user.role === 'qr_operator' ? 'disabled' : ''}>
               <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Administrador</option>
               <option value="supervisor" ${user.role === 'supervisor' ? 'selected' : ''}>Analista de Control y Asistencia</option>
               <option value="empleado" ${user.role === 'empleado' ? 'selected' : ''}>Usuario</option>
+              <option value="qr_operator" ${user.role === 'qr_operator' ? 'selected' : ''}>Generador de QR</option>
             </select>
           </td>
           <td>
-            <select data-user-field="isActive" data-user-id="${user.id}">
+            <select data-user-field="isActive" data-user-id="${user.id}" ${user.role === 'qr_operator' ? 'disabled' : ''}>
               <option value="1" ${user.isActive ? 'selected' : ''}>Habilitado</option>
               <option value="0" ${!user.isActive ? 'selected' : ''}>Deshabilitado</option>
             </select>
           </td>
-          <td><button type="button" data-save-user-id="${user.id}">Guardar</button></td>
+          <td>${user.role === 'qr_operator' ? '<span class="table-note">Sistema</span>' : `<button type="button" data-save-user-id="${user.id}">Guardar</button>`}</td>
         </tr>
       `).join('');
 
@@ -124,7 +138,8 @@ if (!currentUser) {
 
   const loadBranches = async () => {
     try {
-      branchesCache = await request('/admin/branches?includeInactive=1');
+      branchesCache = await request(currentUser.role === 'admin' ? '/admin/branches' : '/admin/branches');
+      renderBranchFilterOptions();
       branchesRows.innerHTML = branchesCache.map((branch) => `
         <tr>
           <td>${branch.id}</td>
@@ -201,26 +216,30 @@ if (!currentUser) {
       });
     };
 
-    setActiveLink(sections[0].id);
+    const syncActiveSection = () => {
+      const current = sections
+        .filter((section) => section.offsetParent !== null)
+        .map((section) => ({
+          id: section.id,
+          distance: Math.abs(section.getBoundingClientRect().top - 120)
+        }))
+        .sort((a, b) => a.distance - b.distance)[0];
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (visible?.target?.id) {
-          setActiveLink(visible.target.id);
-        }
-      },
-      {
-        root: null,
-        rootMargin: '-20% 0px -60% 0px',
-        threshold: [0.2, 0.4, 0.6]
+      if (current?.id) {
+        setActiveLink(current.id);
       }
-    );
+    };
 
-    sections.forEach((section) => observer.observe(section));
+    navLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        const targetId = link.getAttribute('href').replace('#', '');
+        setActiveLink(targetId);
+      });
+    });
+
+    syncActiveSection();
+    window.addEventListener('scroll', syncActiveSection, { passive: true });
+    window.addEventListener('resize', syncActiveSection);
   };
 
   const hideRestrictedAdminSectionsForSupervisor = () => {
@@ -243,6 +262,7 @@ if (!currentUser) {
   };
 
   document.getElementById('filter-btn').addEventListener('click', loadAttendance);
+  branchFilter?.addEventListener('change', loadAttendance);
 
   const downloadReport = async (format) => {
     try {
@@ -455,6 +475,8 @@ if (!currentUser) {
       .then(loadUsers)
       .then(loadDisabledSummary)
       .catch((error) => showToast(error.message, 'error'));
+  } else {
+    loadBranches().catch((error) => showToast(error.message, 'error'));
   }
 
   setupSidebarSectionHighlight();

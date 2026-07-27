@@ -30,6 +30,11 @@ const attachTopbar = (activePath) => {
   const topbar = document.getElementById('topbar');
   if (!topbar || !user) return;
 
+  const isQrOperator = user.role === 'qr_operator';
+  const metaHtml = isQrOperator
+    ? '<div class="topbar-meta topbar-meta-secure"><strong>Modo protegido</strong><p>Generador de QR</p></div>'
+    : `<div class="topbar-meta"><strong>${user.fullName}</strong><p>${roleLabel(user.role)} | Cedula: ${user.cedula || user.username}</p></div>`;
+
   topbar.innerHTML = `
     <div class="topbar-brand">
       <img src="/images/logo.png" alt="Logo Asistencia QR" class="topbar-logo" />
@@ -38,14 +43,11 @@ const attachTopbar = (activePath) => {
         <p>${roleLabel(user.role)}</p>
       </div>
     </div>
-    <div class="topbar-meta">
-      <strong>${user.fullName}</strong>
-      <p>${roleLabel(user.role)} | Cedula: ${user.cedula || user.username}</p>
-    </div>
+    ${metaHtml}
     <div class="nav-links">
       ${user.role === 'qr_operator' ? '<a href="/generator">QR por sede</a>' : ''}
       ${user.role === 'empleado' ? '<a href="/scan">Escaneo QR</a>' : ''}
-      ${user.role === 'admin' ? '<a href="/admin">Administracion</a><a href="/admin#sec-deshabilitados">Deshabilitados</a>' : ''}
+      ${user.role === 'admin' ? '<a href="/admin">Administracion</a>' : ''}
       ${user.role === 'supervisor' ? '<a href="/admin#sec-reportes">Reportes</a>' : ''}
       <button id="logout" class="btn-link">Salir</button>
     </div>

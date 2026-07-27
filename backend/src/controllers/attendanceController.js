@@ -179,6 +179,9 @@ const buildReportQuery = (filters) => {
   if (filters.endDate) {
     query.whereRaw('date(a.checked_in_at) <= ?', [filters.endDate]);
   }
+  if (filters.branchId) {
+    query.where('a.branch_id', Number(filters.branchId));
+  }
   if (filters.status && !filters.lateAfter) {
     query.where('a.status', filters.status);
   }

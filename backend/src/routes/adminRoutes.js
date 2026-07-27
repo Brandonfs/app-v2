@@ -24,7 +24,7 @@ router.patch('/users/:id', authorize('admin'), updateUser);
 router.patch('/users/:id/role', authorize('admin'), updateUserRole);
 router.patch('/users/:id/reactivate', authorize('admin'), reactivateUser);
 
-router.get('/branches', authorize('admin'), listBranches);
+router.get('/branches', authorize('admin', 'supervisor'), listBranches);
 router.post('/branches', authorize('admin'), createBranch);
 router.patch('/branches/:id', authorize('admin'), updateBranch);
 router.patch('/branches/:id/reactivate', authorize('admin'), reactivateBranch);
